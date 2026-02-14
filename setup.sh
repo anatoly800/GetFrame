@@ -1,26 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "--- Updating system and installing basic dependencies ---"
+echo "--- 1. Setup dependencies for Avalonia ---"
 sudo apt-get update
 sudo apt-get install -y \
-    wget \
-    curl \
-    unzip \
-    git \
-    libicu-dev \
-    libfontconfig1 \
-    libx11-6 \
-    ca-certificates
+    wget curl unzip git ca-certificates \
+    libicu-dev libfontconfig1 libx11-6
 
-# .NET SDK (8.0 or 9.0)
-# echo "--- Installing .NET SDK 8.0/9.0 ---"
-# sudo apt-get install -y dotnet-sdk-8.0
-# .NET 9.0, uncomment the line below:
-sudo apt-get install -y dotnet-sdk-9.0
-
-# Check Java 21 ---
-echo "--- Checking Java ---"
+# --- 2. Check and install Java 21 ---
+echo "--- 2. Checking Java ---"
 if command -v java >/dev/null 2>&1; then
     # Extract major version (e.g., "21" from "21.0.1")
     JAVA_VER=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
@@ -39,35 +27,39 @@ fi
 export JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
 echo "JAVA_HOME set to: $JAVA_HOME"
 
-# 3. Setup Android SDK
-echo "--- Setting up Android SDK ---"
+echo "--- 3. Installing .NET SDK 8.0 and 9.0 ---"
+sudo apt-get install -y dotnet-sdk-8.0 dotnet-sdk-9.0
+
+echo "--- 4. Setting up Android SDK ---"
 export ANDROID_HOME=$HOME/android-sdk
 mkdir -p $ANDROID_HOME/cmdline-tools
 
-# Download the latest Command Line Tools
-# The URL may change, check https://developer.android.com/studio#downloads
+# Download Command Line Tools (current link for 2025)
+# Note: Google sometimes changes the version ID in the link
 CMD_LINE_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
 wget -q $CMD_LINE_TOOLS_URL -O cmdline-tools.zip
 unzip -q cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
 rm cmdline-tools.zip
 
-# Important: folder structure must be cmdline-tools/latest/bin/...
-mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+# Adjust folder structure for sdkmanager
+if [ -d "$ANDROID_HOME/cmdline-tools/cmdline-tools" ]; then
+    mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+fi
 
-# Setup paths
+# Set paths for the current session
 export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 
-# 4. Accept licenses and install Android SDK components
-echo "--- Installing Android SDK components ---"
+echo "--- 5. Accepting licenses and installing Android components ---"
 yes | sdkmanager --licenses
-sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+# platforms;android-34 for .NET 8, android-35 for .NET 9
+sdkmanager "platform-tools" "platforms;android-34" "platforms;android-35" "build-tools;34.0.0"
 
-# 5. Install .NET Workload for Android
-echo "--- Installing .NET Workload for Android ---"
-# The command requires sudo if the SDK is installed globally
+echo "--- 6. Installing .NET workloads for Android ---"
 sudo dotnet workload install android
 
-if! grep -q "ANDROID_HOME" ~/.bashrc; then
+echo "--- 7. Saving environment variables ---"
+# Use a separator to avoid duplicate entries on subsequent runs
+if ! grep -q "ANDROID_HOME" ~/.bashrc; then
     {
         echo "export JAVA_HOME=$JAVA_HOME"
         echo "export ANDROID_HOME=$ANDROID_HOME"
@@ -76,6 +68,5 @@ if! grep -q "ANDROID_HOME" ~/.bashrc; then
 fi
 
 echo "--------------------------------------------------------"
-echo "Installation completed successfully!"
-echo "Apply the changes: source ~/.bashrc"
-echo "Build the project: dotnet build -f net8.0-android -c Release"
+echo "Setup complete! To apply the paths, run:"
+echo "source ~/.bashrc"
