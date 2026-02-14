@@ -20,10 +20,25 @@ sudo apt-get install -y dotnet-sdk-8.0
 # If you need .NET 9.0, uncomment the line below:
 # sudo apt-get install -y dotnet-sdk-9.0
 
-# 2. Install JDK (required for Android build)
-# For .NET 8/9, JDK 17 is recommended
-echo "--- Installing OpenJDK 17 ---"
-sudo apt-get install -y openjdk-17-jdk
+# Check Java 21 ---
+echo "--- Checking Java ---"
+if command -v java >/dev/null 2>&1; then
+    # Extract major version (e.g., "21" from "21.0.1")
+    JAVA_VER=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
+    if [ "$JAVA_VER" -ge 21 ]; then
+        echo "Found JDK version $JAVA_VER. No installation required."
+    else
+        echo "Found JDK version $JAVA_VER, but 21+ is required. Installing..."
+        sudo apt-get install -y openjdk-21-jdk
+    fi
+else
+    echo "Java not found. Installing OpenJDK 21..."
+    sudo apt-get install -y openjdk-21-jdk
+fi
+
+# Find JAVA_HOME dynamically
+export JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
+echo "JAVA_HOME set to: $JAVA_HOME"
 
 # 3. Setup Android SDK
 echo "--- Setting up Android SDK ---"
@@ -53,12 +68,13 @@ echo "--- Installing .NET Workload for Android ---"
 # The command requires sudo if the SDK is installed globally
 sudo dotnet workload install android
 
-echo "--- Setting up environment variables in .bashrc ---"
-{
-    echo "export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64"
-    echo "export ANDROID_HOME=$ANDROID_HOME"
-    echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools"
-} >> ~/.bashrc
+if! grep -q "ANDROID_HOME" ~/.bashrc; then
+    {
+        echo "export JAVA_HOME=$JAVA_HOME"
+        echo "export ANDROID_HOME=$ANDROID_HOME"
+        echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools"
+    } >> ~/.bashrc
+fi
 
 echo "--------------------------------------------------------"
 echo "Installation completed successfully!"
