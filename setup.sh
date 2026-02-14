@@ -13,12 +13,11 @@ sudo apt-get install -y \
     libx11-6 \
     ca-certificates
 
-# 1. Setup .NET SDK (8.0 or 9.0)
-# On Ubuntu 24.04, it is recommended to use system repositories
-echo "--- Installing .NET SDK 8.0/9.0 ---"
-sudo apt-get install -y dotnet-sdk-8.0
-# If you need .NET 9.0, uncomment the line below:
-# sudo apt-get install -y dotnet-sdk-9.0
+# .NET SDK (8.0 or 9.0)
+# echo "--- Installing .NET SDK 8.0/9.0 ---"
+# sudo apt-get install -y dotnet-sdk-8.0
+# .NET 9.0, uncomment the line below:
+sudo apt-get install -y dotnet-sdk-9.0
 
 # Check Java 21 ---
 echo "--- Checking Java ---"
