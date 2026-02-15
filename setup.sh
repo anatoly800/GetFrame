@@ -24,10 +24,10 @@ fi
 export JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
 echo "JAVA_HOME set to: $JAVA_HOME"
 
-echo "--- 3. Installing .NET SDK 10.0 ---"
+echo "Installing .NET SDK 10.0 ---"
 sudo apt-get install -y dotnet-sdk-10.0
 
-echo "--- 4. Setting up Android SDK ---"
+echo "Setting up Android SDK ---"
 export ANDROID_HOME=$HOME/android-sdk
 mkdir -p $ANDROID_HOME/cmdline-tools
 
@@ -48,11 +48,11 @@ export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-
 
 echo "--- 5. Accepting licenses and installing Android components ---"
 yes | sdkmanager --licenses
-# platforms;android-34 for .NET 8, android-35 for .NET 9
-sdkmanager "platform-tools" "platforms;android-34" "platforms;android-35" "build-tools;34.0.0"
+sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
 echo "--- 6. Installing .NET workloads for Android ---"
-sudo dotnet workload install android
+dotnet workload update
+dotnet workload install android --source https://api.nuget.org
 
 echo "--- 7. Saving environment variables ---"
 # Use a separator to avoid duplicate entries on subsequent runs
