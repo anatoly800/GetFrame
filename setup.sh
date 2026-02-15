@@ -46,15 +46,15 @@ fi
 # Set paths for the current session
 export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 
-echo "--- 5. Accepting licenses and installing Android components ---"
+echo "Accepting licenses and installing Android components ---"
 yes | sdkmanager --licenses
 sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-echo "--- 6. Installing .NET workloads for Android ---"
+echo "Installing .NET workloads for Android ---"
 dotnet workload update
-dotnet workload install android --source https://api.nuget.org
+dotnet workload install android
 
-echo "--- 7. Saving environment variables ---"
+echo "Saving environment variables ---"
 # Use a separator to avoid duplicate entries on subsequent runs
 if ! grep -q "ANDROID_HOME" ~/.bashrc; then
     {
