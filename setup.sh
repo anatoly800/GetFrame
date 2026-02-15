@@ -1,11 +1,8 @@
 #!/bin/bash
 set -e
 
-echo "--- 1. Setup dependencies for Avalonia ---"
 sudo apt-get update
-sudo apt-get install -y \
-    wget curl unzip git ca-certificates \
-    libicu-dev libfontconfig1 libx11-6
+sudo apt-get install -y wget curl unzip git ca-certificates libicu-dev
 
 # --- 2. Check and install Java 21 ---
 echo "--- 2. Checking Java ---"
