@@ -24,8 +24,8 @@ fi
 export JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
 echo "JAVA_HOME set to: $JAVA_HOME"
 
-echo "--- 3. Installing .NET SDK 8.0 and 9.0 ---"
-sudo apt-get install -y dotnet-sdk-8.0 dotnet-sdk-9.0
+echo "--- 3. Installing .NET SDK 10.0 ---"
+sudo apt-get install -y dotnet-sdk-10.0
 
 echo "--- 4. Setting up Android SDK ---"
 export ANDROID_HOME=$HOME/android-sdk
