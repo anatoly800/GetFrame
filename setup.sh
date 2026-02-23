@@ -1,18 +1,17 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 sudo apt-get update
 sudo apt-get install -y wget curl unzip git ca-certificates libicu-dev
 
-# --- 2. Check and install Java 21 ---
-echo "--- 2. Checking Java ---"
+# --- Java 21 ---
+echo "--- Checking Java ---"
 if command -v java >/dev/null 2>&1; then
-    # Extract major version (e.g., "21" from "21.0.1")
     JAVA_VER=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
     if [ "$JAVA_VER" -ge 21 ]; then
-        echo "Found JDK version $JAVA_VER. No installation required."
+        echo "Found JDK version $JAVA_VER."
     else
-        echo "Found JDK version $JAVA_VER, but 21+ is required. Installing..."
+        echo "Found JDK $JAVA_VER, installing OpenJDK 21..."
         sudo apt-get install -y openjdk-21-jdk
     fi
 else
@@ -20,42 +19,50 @@ else
     sudo apt-get install -y openjdk-21-jdk
 fi
 
-# Find JAVA_HOME dynamically
-export JAVA_HOME=$(readlink -f $(which java) | sed "s:/bin/java::")
+export JAVA_HOME
+JAVA_HOME=$(readlink -f "$(which java)" | sed "s:/bin/java::")
 echo "JAVA_HOME set to: $JAVA_HOME"
 
-echo "Installing .NET SDK 10.0 ---"
-sudo apt-get install -y dotnet-sdk-10.0
+# Project targets net9.0 / net9.0-android, so SDK 9 is mandatory.
+echo "--- Installing .NET SDK 9.0 ---"
+sudo apt-get install -y dotnet-sdk-9.0
 
-echo "Setting up Android SDK ---"
-export ANDROID_HOME=$HOME/android-sdk
-mkdir -p $ANDROID_HOME/cmdline-tools
+# Optional: keep SDK 10 available too (already used in some images/pipelines).
+echo "--- Installing .NET SDK 10.0 (optional) ---"
+sudo apt-get install -y dotnet-sdk-10.0 || true
 
-# Download Command Line Tools (current link for 2025)
-# Note: Google sometimes changes the version ID in the link
-CMD_LINE_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-wget -q $CMD_LINE_TOOLS_URL -O cmdline-tools.zip
-unzip -q cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
-rm cmdline-tools.zip
-
-# Adjust folder structure for sdkmanager
-if [ -d "$ANDROID_HOME/cmdline-tools/cmdline-tools" ]; then
-    mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+# NuGet source configuration.
+# If a mirror is available, pass NUGET_SOURCE_URL env var before running setup.sh.
+if [ -n "${NUGET_SOURCE_URL:-}" ]; then
+    echo "--- Configuring NuGet mirror source ---"
+    dotnet nuget remove source getframe-mirror >/dev/null 2>&1 || true
+    dotnet nuget add source "$NUGET_SOURCE_URL" --name getframe-mirror
 fi
 
-# Set paths for the current session
-export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+echo "--- Setting up Android SDK ---"
+export ANDROID_HOME="$HOME/android-sdk"
+mkdir -p "$ANDROID_HOME/cmdline-tools"
 
-echo "Accepting licenses and installing Android components ---"
+CMD_LINE_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+wget -q "$CMD_LINE_TOOLS_URL" -O cmdline-tools.zip
+unzip -q cmdline-tools.zip -d "$ANDROID_HOME/cmdline-tools"
+rm cmdline-tools.zip
+
+if [ -d "$ANDROID_HOME/cmdline-tools/cmdline-tools" ]; then
+    mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+fi
+
+export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+
+echo "--- Accepting licenses and installing Android components ---"
 yes | sdkmanager --licenses
 sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-echo "Installing .NET workloads for Android ---"
+echo "--- Installing .NET workloads for Android ---"
 dotnet workload update
 dotnet workload install android
 
-echo "Saving environment variables ---"
-# Use a separator to avoid duplicate entries on subsequent runs
+echo "--- Saving environment variables ---"
 if ! grep -q "ANDROID_HOME" ~/.bashrc; then
     {
         echo "export JAVA_HOME=$JAVA_HOME"
