@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/GetFrame.Android/GetFrame.Android.csproj" />
-    <Project Path="src/GetFrame/GetFrame.csproj" />
+    <Project Path="src/GetFrame.Windows/GetFrame.Windows.csproj" />
+    <Project Path="src/GetFrame.Core/GetFrame.Core.csproj" />
   </Folder>
 </Solution>

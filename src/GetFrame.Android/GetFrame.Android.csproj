@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0-android</TargetFramework>
-    <OutputType>Exe</OutputType>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseMaui>false</UseMaui>
-    <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
-    <IncludeSymbols>True</IncludeSymbols>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>GetFrame</Title>
-    <AssemblyName>GetFrame.Android</AssemblyName>
-    <AssemblyTitle>GetFrame.Android</AssemblyTitle>
-    <RootNamespace>GetFrame.Android</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup Label="Avalonia">
-    <AvaloniaXamlIlDebuggerLaunch>True</AvaloniaXamlIlDebuggerLaunch>
-    <AvaloniaXamlVerboseExceptions>True</AvaloniaXamlVerboseExceptions>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0-android</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseMaui>false</UseMaui>
+        <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+        <IncludeSymbols>True</IncludeSymbols>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Title>GetFrame</Title>
+        <AssemblyName>GetFrame.Android</AssemblyName>
+        <AssemblyTitle>GetFrame.Android</AssemblyTitle>
+        <RootNamespace>GetFrame.Android</RootNamespace>
+    </PropertyGroup>
+    <PropertyGroup Label="Avalonia">
+        <AvaloniaXamlIlDebuggerLaunch>True</AvaloniaXamlIlDebuggerLaunch>
+        <AvaloniaXamlVerboseExceptions>True</AvaloniaXamlVerboseExceptions>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../GetFrame/GetFrame.csproj" />
-    <PackageReference Include="Avalonia.Android" Version="11.3.12" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../GetFrame.Core/GetFrame.Core.csproj" />
+        <PackageReference Include="Avalonia.Android" Version="11.3.12" />
+    </ItemGroup>
 </Project>
