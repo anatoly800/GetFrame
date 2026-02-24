@@ -4,7 +4,7 @@
              RequestedThemeVariant="Default">
   <Application.Styles>
     <FluentTheme />
-    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+
     <Style Selector="Border.RoundedBorder">
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="Padding" Value="10" />

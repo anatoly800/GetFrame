@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0-android</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -6,10 +6,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseMaui>false</UseMaui>
     <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+    <IncludeSymbols>True</IncludeSymbols>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>GetFrame</Title>
+    <AssemblyName>GetFrame.Android</AssemblyName>
+    <AssemblyTitle>GetFrame.Android</AssemblyTitle>
+    <RootNamespace>GetFrame.Android</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Label="Avalonia">
+    <AvaloniaXamlIlDebuggerLaunch>True</AvaloniaXamlIlDebuggerLaunch>
+    <AvaloniaXamlVerboseExceptions>True</AvaloniaXamlVerboseExceptions>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../GetFrame/GetFrame.csproj" />
-    <PackageReference Include="Avalonia.Android" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Android" Version="11.3.12" />
   </ItemGroup>
 </Project>

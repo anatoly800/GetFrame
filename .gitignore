@@ -1,40 +1,52 @@
-```
+```axaml
 # Build artifacts
 bin/
 obj/
-*.dll
-*.exe
-*.pdb
-*.nupkg
-*.snupkg
-*.msi
-*.msp
-*.msm
+**/Debug/
+**/Release/
+**/bin/
+**/obj/
 
 # Dependencies
 packages/
-node_modules/
+**/packages/
 
 # Logs
 *.log
 
 # User-specific files
+*.userprefs
+**/UserPrefs.xml
+.vs/
+**/.vs/
+
+# IDE
+.idea/
+*.suo
 *.user
 *.userosscache
-*.suo
-*.userprefs
-
-# IDE - VSCode
-.vscode/
-
-# IDE - Visual Studio
-.vs/
-*.VC.db
-*.VC.VC.opendb
+*.sln.docstates
 
 # OS generated files
 .DS_Store
 Thumbs.db
 ehthumbs.db
 Icon?
+desktop.ini
+
+# Configuration files that might contain secrets
+**/*.config.user
+**/appsettings.*.json
+!**/appsettings.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Generated files
+**/Generated*
+**/*_g.cs
+**/*_g.go
+**/*_generated.*
 ```
