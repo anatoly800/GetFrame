@@ -1,7 +1,11 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/copilot-setup-steps.yml" />
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/GetFrame.Android/GetFrame.Android.csproj" />
-    <Project Path="src/GetFrame.Windows/GetFrame.Windows.csproj" />
     <Project Path="src/GetFrame.Core/GetFrame.Core.csproj" />
+    <Project Path="src/GetFrame.Windows/GetFrame.Windows.csproj" />
   </Folder>
 </Solution>

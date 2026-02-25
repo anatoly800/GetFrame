@@ -1,0 +1,46 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    # Copilot can't work only on Ubuntu x64 and Windows x64
+    # Here we explicitly specify both options
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # Set up the required .NET SDK version
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      # Restore NuGet packages in advance,
+      # so Copilot doesn't try to download them itself
+      - name: Restore dependencies
+        run: dotnet restore --ignore-failed-sources
+
+      # Disable Avalonia Build Services,
+      # so Copilot doesn't try to connect to av-build-tel-api-v1.avaloniaui.net
+      - name: Disable Avalonia Build Services
+        run: |
+          echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" >> $GITHUB_ENV
+          echo "AVALONIA_BUILD_SERVICES_DISABLE=1" >> $GITHUB_ENV
+        shell: bash
