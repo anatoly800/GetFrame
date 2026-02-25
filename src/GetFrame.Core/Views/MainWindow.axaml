@@ -4,8 +4,6 @@
         xmlns:conv="clr-namespace:GetFrame.Converters"
         x:Class="GetFrame.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="1000"
-        Height="700"
         Title="GetFrame">
   <Window.Resources>
     <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
@@ -23,7 +21,7 @@
 
     <Border Grid.Row="1" Classes="RoundedBorder">
       <Viewbox StretchDirection="DownOnly" Stretch="Uniform">
-        <Image Source="{Binding PreviewImage}" Width="960" Height="540" />
+        <Image Source="{Binding PreviewImage}" />
       </Viewbox>
     </Border>
 
