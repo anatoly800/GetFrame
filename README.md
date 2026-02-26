@@ -50,4 +50,13 @@ MainWindow.axaml - разметка интерфейса.
 
 `setup.sh` для настройки окружения в Linux docker-контейнере. (Вызываться автоматически, AI не нужно запускать его вручную)
 
+`Properties\AndroidManifest.xml`
+```
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+                   android:maxSdkVersion="32" />
+</manifest>
+```
+
 ## Реализовано

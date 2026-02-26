@@ -1,9 +1,8 @@
-using Android.App;
 using Android.Content.PM;
-using Android.OS;
 using Avalonia;
 using Avalonia.Android;
-using GetFrame;
+using GetFrame.Core.Services;
+using GetFrame.Android;
 
 namespace GetFrame.Android;
 
@@ -18,7 +17,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        App.RegisterVideoService(new AndroidVideoService());
+        App.RegisterVideoService(new VideoService());
         return base.CustomizeAppBuilder(builder);
     }
 }

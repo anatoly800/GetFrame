@@ -1,11 +1,13 @@
 using Avalonia.Media.Imaging;
-using GetFrame.Models;
+using GetFrame.Core.Models;
 
-namespace GetFrame.Services;
+namespace GetFrame.Core.Services;
 
 public interface IVideoService
 {
-    Task<VideoInfo> GetVideoInfoAsync(string path, CancellationToken cancellationToken);
+    Task<string?> AskVideoFilePathAsync();
+
+    Task<VideoMetadata> GetVideoInfoAsync(string path, CancellationToken cancellationToken);
 
     Task<Bitmap> GetFrameAsync(string path, int frameIndex, int? requestedWidth, int? requestedHeight, CancellationToken cancellationToken);
 

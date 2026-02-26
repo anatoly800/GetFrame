@@ -1,27 +1,61 @@
 using Android.Media;
-using GetFrame.Models;
-using GetFrame.Services;
+using GetFrame.Core.Models;
+using GetFrame.Core.Services;
 
-namespace GetFrame.Android
-    public sealed class AndroidVideoService : IVideoService
+namespace GetFrame.Android;
+
+public sealed class VideoService : IVideoService
 {
-    public async Task<VideoInfo> GetVideoInfoAsync(string path, CancellationToken cancellationToken)
+
+    public async Task<string?> AskVideoFilePathAsync()
+    {
+        // In Android file-picker should set this path.
+        var path = Environment.GetEnvironmentVariable("GETFRAME_SAMPLE_VIDEO");
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+        return path;
+    }
+
+    public async Task<VideoMetadata> GetVideoInfoAsync(string path, CancellationToken cancellationToken)
     {
         return await Task.Run(() =>
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            using MediaMetadataRetriever retriever = new();
-            retriever.SetDataSource(path);
-            var width = ParseInt(retriever.ExtractMetadata(MetadataKey.VideoWidth));
-            var height = ParseInt(retriever.ExtractMetadata(MetadataKey.VideoHeight));
-            var durationMs = ParseDouble(retriever.ExtractMetadata(MetadataKey.Duration));
-            var fpsText = retriever.ExtractMetadata(MetadataKey.CaptureFramerate) ?? throw new InvalidOperationException("Cannot read FPS on this device/API.");
-            var fps = ParseDouble(fpsText);
-            var totalFrames = OperatingSystem.IsAndroidVersionAtLeast(28)
-                ? ParseInt(retriever.ExtractMetadata(MetadataKey.VideoFrameCount))
-                : (int)Math.Max(1, Math.Round(durationMs / 1000d * fps));
-            var codec = retriever.ExtractMetadata(MetadataKey.Mimetype) ?? "unknown";
-            return new VideoInfo(path, width, height, durationMs, fps, Math.Max(1, totalFrames), codec);
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                VideoMetadata videoMetadata = new()
+                {
+                    FilePath = path
+                };
+                using MediaMetadataRetriever retriever = new();
+                retriever.SetDataSource(path);
+                videoMetadata.Width = int.TryParse(retriever.ExtractMetadata(MetadataKey.VideoWidth), out var width) ? width : 0;
+                videoMetadata.Height = int.TryParse(retriever.ExtractMetadata(MetadataKey.VideoHeight), out var height) ? height : 0;
+                videoMetadata.DurationMs = ParseDouble(retriever.ExtractMetadata(MetadataKey.Duration));
+                videoMetadata.Framerate = retriever.ExtractMetadata(MetadataKey.CaptureFramerate) ?? throw new InvalidOperationException("Cannot read FPS on this device/API.");
+                videoMetadata.Fps = ParseDouble(videoMetadata.Framerate);
+                videoMetadata.Frames = OperatingSystem.IsAndroidVersionAtLeast(28)
+                    ? long.TryParse(retriever.ExtractMetadata(MetadataKey.VideoFrameCount), out var frames) ? frames : 0
+                    : (long)Math.Max(1, Math.Round(videoMetadata.DurationMs / 1000d * videoMetadata.Fps));
+                videoMetadata.FileSize = new FileInfo(path).Length;
+                return videoMetadata;
+            }
+            catch (Exception ex)
+            {
+                return new VideoMetadata
+                {
+                    FilePath = path,
+                    VideoServiceErrorCode = cancellationToken.IsCancellationRequested
+                        ? VideoServiceErrorCode.OperationCanceled
+                        : VideoServiceErrorCode.MetadataRetrievalFailed,
+                    StatusMessage = cancellationToken.IsCancellationRequested
+                        ? "Operation was canceled."
+                        : $"Failed to retrieve video metadata: {ex.Message}"
+                };
+            }
         }, cancellationToken);
     }
 
@@ -104,9 +138,6 @@ namespace GetFrame.Android
 
         return retriever.GetFrameAtTime(timeUs, Option.Closest);
     }
-
-    private static int ParseInt(string? value)
-        => int.TryParse(value, out var parsed) ? parsed : 0;
 
     private static double ParseDouble(string? value)
         => double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
