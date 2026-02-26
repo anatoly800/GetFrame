@@ -5,9 +5,12 @@ namespace GetFrame.Windows;
 internal sealed class Program
 {
     [STAThread]
-    public static void Main(string[] args) => 
+    public static void Main(string[] args)
+    {
+        GetFrame.Core.App.RegisterVideoService(new VideoService());
         BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+            .StartWithClassicDesktopLifetime(args);
+    }
 
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<GetFrame.Core.App>()
