@@ -12,7 +12,9 @@ namespace GetFrame.Android;
     Icon = "@mipmap/icon",
     LaunchMode = LaunchMode.SingleTop,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode,
-    ScreenOrientation = ScreenOrientation.FullUser)]
+    ScreenOrientation = ScreenOrientation.FullUser
+
+    )]
 public class MainActivity : AvaloniaMainActivity<GetFrame.Core.App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
