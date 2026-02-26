@@ -597,7 +597,7 @@ public partial class VideoService : IVideoService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var line = await process.StandardOutput.ReadLineAsync().WaitAsync(cancellationToken);
+            var line = await process.StandardOutput.ReadLineAsync(cancellationToken);
             if (line is null)
             {
                 break;
