@@ -71,7 +71,7 @@ jobs:
       with:
         name: GetFrame.Windows-${{ matrix.configuration }}
         path: GetFrame.Windows-${{ matrix.configuration }}.zip
-        retention-days: 30
+        retention-days: 7
 
     - name: Upload Android artifacts
       if: always()
@@ -79,5 +79,5 @@ jobs:
       with:
         name: GetFrame.Android-${{ matrix.configuration }}
         path: GetFrame.Android-${{ matrix.configuration }}.zip
-        retention-days: 30
+        retention-days: 7
 
