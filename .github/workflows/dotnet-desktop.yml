@@ -14,12 +14,11 @@ jobs:
       matrix:
         configuration: [Debug, Release]
 
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: windows-latest
 
     env:
       Solution_Name: GetFrame.slnx
-      BuildProjectWin: GetFrame.Windoiws/GetFrame.Windows.csproj
+      BuildProjectWin: GetFrame.Windows/GetFrame.Windows.csproj
       BuildProjectAndroid: GetFrame.Android/GetFrame.Android.csproj
 
     steps:
@@ -39,11 +38,46 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+    - name: Restore dependencies
+      run: dotnet restore $env:Solution_Name
       env:
         Configuration: ${{ matrix.configuration }}
 
-    - name: Restore dependencies
-      run: dotnet restore --ignore-failed-sources
+    - name: Build Windows project
+      run: dotnet build $env:BuildProjectWin -c ${{ matrix.configuration }} --no-restore
+
+    - name: Build Android project
+      run: dotnet build $env:BuildProjectAndroid -c ${{ matrix.configuration }} --no-restore
+
+    - name: Archive Windows build artifacts
+      if: always()
+      run: |
+        $outputDir = "GetFrame.Windows/bin/${{ matrix.configuration }}"
+        if (Test-Path $outputDir) {
+          Compress-Archive -Path $outputDir -DestinationPath "GetFrame.Windows-${{ matrix.configuration }}.zip" -Force
+        }
+
+    - name: Archive Android build artifacts
+      if: always()
+      run: |
+        $outputDir = "GetFrame.Android/bin/${{ matrix.configuration }}"
+        if (Test-Path $outputDir) {
+          Compress-Archive -Path $outputDir -DestinationPath "GetFrame.Android-${{ matrix.configuration }}.zip" -Force
+        }
+
+    - name: Upload Windows artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: GetFrame.Windows-${{ matrix.configuration }}
+        path: GetFrame.Windows-${{ matrix.configuration }}.zip
+        retention-days: 30
+
+    - name: Upload Android artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: GetFrame.Android-${{ matrix.configuration }}
+        path: GetFrame.Android-${{ matrix.configuration }}.zip
+        retention-days: 30
 
