@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".github/workflows/copilot-setup-steps.yml.bak" />
+    <File Path=".github/workflows/dotnet-desktop.yml" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
