@@ -1,6 +1,6 @@
 using Avalonia;
 
-namespace GetFrame;
+namespace GetFrame.Windows;
 
 internal sealed class Program
 {
@@ -8,7 +8,7 @@ internal sealed class Program
     public static void Main(string[] args) => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+        => AppBuilder.Configure<GetFrame.Core.App>()
             .UsePlatformDetect()
             .LogToTrace();
 }

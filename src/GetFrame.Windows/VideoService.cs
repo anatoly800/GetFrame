@@ -1,4 +1,4 @@
-// Ignore Spelling: Fmpeg Vid
+// Ignore Spelling: Ffmpeg Vid
 
 using Avalonia;
 using Avalonia.Controls;
@@ -58,22 +58,117 @@ public partial class VideoService : IVideoService
         return result[0].Path.LocalPath;
     }
 
-    public Task<VideoInfo> GetVideoInfoAsync(string path, CancellationToken cancellationToken)
+    public Task<VideoMetadata> GetVideoInfoAsync(string path, CancellationToken cancellationToken)
     {
-
-        return Task.FromResult(new VideoInfo() { });
+        return GetVideoMetadataAsync(path, GetFFprobePath(), null, cancellationToken);
     }
 
-    public Task<Bitmap> GetFrameAsync(string path, int frameIndex, int? requestedWidth, int? requestedHeight, CancellationToken cancellationToken)
+    public async Task<Bitmap> GetFrameAsync(string path, int frameIndex, CancellationToken cancellationToken)
     {
+        
+
+        var ffmpegPath = GetFFmpegPath();
+        if (string.IsNullOrWhiteSpace(ffmpegPath))
+        {
+            throw new InvalidOperationException("FFmpeg path is not configured.");
+        }
+
+        var tempFramePath = await ExtractFrameForPreview(path, ffmpegPath, frameIndex, cancellationToken);
+        if (tempFramePath == null || !File.Exists(tempFramePath))
+        {
+            throw new InvalidOperationException("Failed to extract frame from video.");
+        }
+
+        try
+        {
+            using var stream = File.OpenRead(tempFramePath);
+            return new Bitmap(stream);
+        }
+        finally
+        {
+            try
+            {
+                if (File.Exists(tempFramePath))
+                {
+                    File.Delete(tempFramePath);
+                }
+            }
+            catch
+            {
+                // Best effort cleanup
+            }
+        }
     }
 
-    public Task SaveFrameAsPngAsync(string path, int frameIndex, string outputPngPath, CancellationToken cancellationToken)
+    public async Task SaveFrameAsPngAsync(string path, int frameIndex, string outputPngPath, CancellationToken cancellationToken)
     {
+        var ffmpegPath = GetFFmpegPath();
+        if (string.IsNullOrWhiteSpace(ffmpegPath))
+        {
+            throw new InvalidOperationException("FFmpeg path is not configured.");
+        }
 
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"Video file not found: {path}");
+        }
+
+        if (frameIndex < 0)
+        {
+            throw new ArgumentException("Frame index cannot be negative.", nameof(frameIndex));
+        }
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = ffmpegPath,
+            Arguments = $"-y -i \"{path}\" -vf \"select='eq(n\\,{frameIndex})'\" -frames:v 1 \"{outputPngPath}\"",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+
+        using var process = new Process { StartInfo = startInfo };
+        try
+        {
+            process.Start();
+
+            var outputTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
+            var errorTask = process.StandardError.ReadToEndAsync(cancellationToken);
+
+            await process.WaitForExitAsync(cancellationToken);
+
+            var output = await outputTask;
+            var error = await errorTask;
+
+            if (process.ExitCode != 0)
+            {
+                throw new InvalidOperationException($"FFmpeg failed with exit code {process.ExitCode}: {error}");
+            }
+
+            if (!File.Exists(outputPngPath))
+            {
+                throw new InvalidOperationException("Frame extraction succeeded but output file was not created.");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            try
+            {
+                if (!process.HasExited)
+                {
+                    process.Kill();
+                }
+            }
+            catch
+            {
+                // Ignore cleanup errors
+            }
+            throw;
+        }
     }
 
-    string GetFFmpegPath()
+    private static string GetFFmpegPath()
     {
         // In a real application, this would likely come from user settings or configuration
         var ffmpegPath = Environment.GetEnvironmentVariable("GETFRAME_FFMPEG_PATH");
@@ -84,7 +179,7 @@ public partial class VideoService : IVideoService
         return ffmpegPath;
     }
 
-    string GetFFprobePath()
+    private static string GetFFprobePath()
     {
         // In a real application, this would likely come from user settings or configuration
         var ffprobePath = Environment.GetEnvironmentVariable("GETFRAME_FFPROBE_PATH");
@@ -93,19 +188,6 @@ public partial class VideoService : IVideoService
             return string.Empty;
         }
         return ffprobePath;
-    }
-
-    private static string FormatFileSize(long bytes)
-    {
-        string[] sizes = ["B", "KB", "MB", "GB"];
-        double len = bytes;
-        int order = 0;
-        while (len >= 1024 && order < sizes.Length - 1)
-        {
-            order++;
-            len /= 1024;
-        }
-        return $"{len:0.##} {sizes[order]}";
     }
 
     public static async Task<VideoMetadata> GetVideoMetadataAsync(

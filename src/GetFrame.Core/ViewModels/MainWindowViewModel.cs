@@ -7,7 +7,7 @@ using GetFrame.Core.Models;
 using GetFrame.Core.Services;
 
 
-namespace GetFrame.ViewModels;
+namespace GetFrame.Core.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
@@ -26,8 +26,12 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool hasError;
     [ObservableProperty] private bool isBusy;
 
-    public MainWindowViewModel(IVideoService videoService)
+    public MainWindowViewModel(IVideoService? videoService)
     {
+        if (videoService is null)
+        {
+            throw new ArgumentNullException(nameof(videoService), "Video service must be provided.");
+        }
         _videoService = videoService;
         _debounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(800) };
         _debounceTimer.Tick += (_, _) =>
@@ -54,7 +58,7 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task OpenAsync()
     {
         string? path = await _videoService.AskVideoFilePathAsync();
-        if (_videoMetadata is null || IsBusy)
+        if (_videoMetadata is null || IsBusy || string.IsNullOrEmpty(path))
         {
             return;
         }
@@ -62,6 +66,32 @@ public partial class MainWindowViewModel : ObservableObject
         await RunBusyOperationAsync(async ct =>
         {
             _videoMetadata = await _videoService.GetVideoInfoAsync(path,ct);
+            if (_videoMetadata is null)
+            {
+                HasError = true;
+                StatusText = "Failed to load video metadata.";
+                return;
+            }
+            if (_videoMetadata.VideoServiceErrorCode != VideoServiceErrorCode.None)
+            {
+                HasError = true;
+                StatusText = $"Error: {_videoMetadata.StatusMessage}";
+                return;
+            }    
+            if (_videoMetadata.Frames == 0)
+            {
+                HasError = true;
+                StatusText = "Video contains no frames.";
+                return;
+            }
+
+            if (_videoMetadata.Frames >= int.MaxValue)
+            {
+                HasError = true;
+                StatusText = $"Video contains too many frames ({_videoMetadata.Frames}). Maximum supported is {int.MaxValue}.";
+                return;
+            }
+
             FrameNumberText = Math.Max(0, _videoMetadata.Frames - 1).ToString();
             HasError = false;
             StatusText = _videoMetadata.BuildInfoText();
@@ -77,7 +107,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        var outputPath = Path.Combine(Path.GetDirectoryName(_videoMetadata.FilePath)!, $"frame-{frameIndex}.png");
+        var outputPath = Path.Combine(_videoMetadata.FilePath, $"frame-{frameIndex}.png");
         await RunBusyOperationAsync(async ct => await _videoService.SaveFrameAsPngAsync(_videoMetadata.FilePath, frameIndex, outputPath, ct));
         HasError = false;
         StatusText = $"Saved: {outputPath}";
@@ -100,7 +130,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         await RunBusyOperationAsync(async ct =>
         {
-            PreviewImage = await _videoService.GetFrameAsync(_videoMetadata.FilePath, frameIndex, 960, 540, ct);
+            PreviewImage = await _videoService.GetFrameAsync(_videoMetadata.FilePath, frameIndex, ct);
             HasError = false;
             StatusText = _videoMetadata.BuildInfoText();
         });
@@ -141,19 +171,23 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    private bool TryGetFrameIndex(out long frameIndex)
+    private bool TryGetFrameIndex(out int frameIndex)
     {
+
         frameIndex = 0;
-        if (_videoMetadata is null || !long.TryParse(FrameNumberText, out frameIndex) || frameIndex < 0)
+
+        if (_videoMetadata is null || !long.TryParse(FrameNumberText, out long tmp) || tmp < 0)
         {
             HasError = true;
             StatusText = "Frame number must be a non-negative integer.";
             return false;
         }
 
+        frameIndex = (int)Math.Min(tmp, int.MaxValue);  
+
         if (frameIndex >= _videoMetadata.Frames)
         {
-            frameIndex = Math.Max(0, _videoMetadata.Frames - 1);
+            frameIndex = (int)Math.Max(0, _videoMetadata.Frames - 1);
         }
 
         return true;

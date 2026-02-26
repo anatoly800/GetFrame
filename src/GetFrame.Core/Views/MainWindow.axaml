@@ -1,8 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:GetFrame.ViewModels"
-        xmlns:conv="clr-namespace:GetFrame.Converters"
-        x:Class="GetFrame.Views.MainWindow"
+        xmlns:vm="clr-namespace:GetFrame.Core.ViewModels"
+        xmlns:conv="clr-namespace:GetFrame.Core.Converters"
+        x:Class="GetFrame.Core.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="GetFrame">
   <Window.Resources>

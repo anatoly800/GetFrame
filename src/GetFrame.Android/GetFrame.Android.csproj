@@ -19,6 +19,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AndroidResource Include="Resources\**\*" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="../GetFrame.Core/GetFrame.Core.csproj" />
         <PackageReference Include="Avalonia.Android" Version="11.3.12" />
     </ItemGroup>

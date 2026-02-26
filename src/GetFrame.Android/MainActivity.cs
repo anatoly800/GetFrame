@@ -13,11 +13,11 @@ namespace GetFrame.Android;
     LaunchMode = LaunchMode.SingleTop,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode,
     ScreenOrientation = ScreenOrientation.FullUser)]
-public class MainActivity : AvaloniaMainActivity<App>
+public class MainActivity : AvaloniaMainActivity<GetFrame.Core.App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        App.RegisterVideoService(new VideoService());
+        GetFrame.Core.App.RegisterVideoService(new VideoService());
         return base.CustomizeAppBuilder(builder);
     }
 }

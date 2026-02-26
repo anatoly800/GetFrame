@@ -62,8 +62,6 @@ public sealed class VideoService : IVideoService
     public async Task<Avalonia.Media.Imaging.Bitmap> GetFrameAsync(
         string path,
         int frameIndex,
-        int? requestedWidth,
-        int? requestedHeight,
         CancellationToken cancellationToken
         )
     {
@@ -73,7 +71,7 @@ public sealed class VideoService : IVideoService
             using var retriever = new MediaMetadataRetriever();
             retriever.SetDataSource(path);
 
-            using var nativeBitmap = GetFrameInternal(retriever, frameIndex, requestedWidth, requestedHeight)
+            using var nativeBitmap = GetFrameInternal(retriever, frameIndex)
                 ?? throw new InvalidOperationException("Frame extraction failed.");
 
             using MemoryStream stream = new();
@@ -93,7 +91,7 @@ public sealed class VideoService : IVideoService
             using var retriever = new MediaMetadataRetriever();
             retriever.SetDataSource(path);
 
-            using var nativeBitmap = GetFrameInternal(retriever, frameIndex, null, null)
+            using var nativeBitmap = GetFrameInternal(retriever, frameIndex)
                 ?? throw new InvalidOperationException("Frame extraction failed.");
             using var output = File.Open(outputPngPath, FileMode.Create, FileAccess.Write, FileShare.None);
 
@@ -102,7 +100,7 @@ public sealed class VideoService : IVideoService
         }, cancellationToken);
     }
 
-    private static global::Android.Graphics.Bitmap? GetFrameInternal(MediaMetadataRetriever retriever, int frameIndex, int? requestedWidth, int? requestedHeight)
+    private static global::Android.Graphics.Bitmap? GetFrameInternal(MediaMetadataRetriever retriever, int frameIndex)
     {
         if (OperatingSystem.IsAndroidVersionAtLeast(28))
         {
@@ -111,31 +109,7 @@ public sealed class VideoService : IVideoService
 
         var fps = ParseDouble(retriever.ExtractMetadata(MetadataKey.CaptureFramerate)
             ?? throw new InvalidOperationException("Cannot read FPS on this device/API."));
-
         var timeUs = (long)Math.Max(0, ((frameIndex / fps) * 1_000_000d) - 1);
-
-        if (requestedWidth is > 0 && requestedHeight is > 0)
-        {
-            if (OperatingSystem.IsAndroidVersionAtLeast(27))
-            {
-                return retriever.GetScaledFrameAtTime(timeUs, Option.Closest, requestedWidth.Value, requestedHeight.Value);
-            }
-            else
-            {
-                var unscaledBitmap = retriever.GetFrameAtTime(timeUs, Option.Closest);
-                if (unscaledBitmap != null)
-                {
-                    var scaledBitmap = global::Android.Graphics.Bitmap.CreateScaledBitmap(unscaledBitmap, requestedWidth.Value, requestedHeight.Value, true);
-                    if (scaledBitmap != unscaledBitmap)
-                    {
-                        unscaledBitmap.Dispose();
-                    }
-                    return scaledBitmap;
-                }
-                return null;
-            }
-        }
-
         return retriever.GetFrameAtTime(timeUs, Option.Closest);
     }
 

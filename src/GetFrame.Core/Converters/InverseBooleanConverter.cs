@@ -1,7 +1,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace GetFrame.Converters;
+namespace GetFrame.Core.Converters;
 
 public sealed class InverseBooleanConverter : IValueConverter
 {
