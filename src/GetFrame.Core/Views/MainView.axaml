@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:GetFrame.Core.ViewModels"
+             xmlns:conv="clr-namespace:GetFrame.Core.Converters"
+             x:Class="GetFrame.Core.Views.MainView"
+             x:DataType="vm:MainWindowViewModel">
+  <UserControl.Resources>
+    <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+  </UserControl.Resources>
+  <Grid RowDefinitions="Auto,*,Auto" Margin="10">
+    <Border Grid.Row="0" Classes="RoundedBorder">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <Button Grid.Column="0" Content="📂 Open" Command="{Binding OpenCommand}" MinWidth="110" />
+        <TextBox Grid.Column="1"
+                 Text="{Binding FrameNumberText, UpdateSourceTrigger=PropertyChanged}"
+                 Watermark="Frame number" />
+        <Button Grid.Column="2" Content="💾 Save" Command="{Binding SaveCommand}" MinWidth="110" />
+      </Grid>
+    </Border>
+
+    <Border Grid.Row="1" Classes="RoundedBorder">
+      <Viewbox StretchDirection="DownOnly" Stretch="Uniform">
+        <Image Source="{Binding PreviewImage}" />
+      </Viewbox>
+    </Border>
+
+    <Border Grid.Row="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding HasError}">
+      <Grid>
+        <TextBlock Text="{Binding StatusText}" IsVisible="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" VerticalAlignment="Center" />
+        <Button Content="Cancel"
+                Command="{Binding CancelCommand}"
+                IsVisible="{Binding IsBusy}"
+                HorizontalAlignment="Stretch"
+                Height="44">
+          <Button.Styles>
+            <Style Selector="Button">
+              <Setter Property="Background" Value="#2E7D32" />
+              <Style.Animations>
+                <Animation Duration="0:0:1.2" IterationCount="INFINITE" PlaybackDirection="Alternate">
+                  <KeyFrame Cue="0%">
+                    <Setter Property="Background" Value="#2E7D32" />
+                  </KeyFrame>
+                  <KeyFrame Cue="100%">
+                    <Setter Property="Background" Value="#66BB6A" />
+                  </KeyFrame>
+                </Animation>
+              </Style.Animations>
+            </Style>
+          </Button.Styles>
+        </Button>
+        <TextBlock Text="{Binding ElapsedSeconds}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" IsVisible="{Binding IsBusy}" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>
