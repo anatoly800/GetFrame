@@ -18,8 +18,8 @@ jobs:
 
     env:
       Solution_Name: GetFrame.slnx
-      BuildProjectWin: GetFrame.Windows/GetFrame.Windows.csproj
-      BuildProjectAndroid: GetFrame.Android/GetFrame.Android.csproj
+      BuildProjectWin: src/GetFrame.Windows/GetFrame.Windows.csproj
+      BuildProjectAndroid: src/GetFrame.Android/GetFrame.Android.csproj
 
     steps:
     - name: Checkout
@@ -52,7 +52,7 @@ jobs:
     - name: Archive Windows build artifacts
       if: always()
       run: |
-        $outputDir = "GetFrame.Windows/bin/${{ matrix.configuration }}"
+        $outputDir = "src/GetFrame.Windows/bin/${{ matrix.configuration }}"
         if (Test-Path $outputDir) {
           Compress-Archive -Path $outputDir -DestinationPath "GetFrame.Windows-${{ matrix.configuration }}.zip" -Force
         }
@@ -60,7 +60,7 @@ jobs:
     - name: Archive Android build artifacts
       if: always()
       run: |
-        $outputDir = "GetFrame.Android/bin/${{ matrix.configuration }}"
+        $outputDir = "src/GetFrame.Android/bin/${{ matrix.configuration }}"
         if (Test-Path $outputDir) {
           Compress-Archive -Path $outputDir -DestinationPath "GetFrame.Android-${{ matrix.configuration }}.zip" -Force
         }

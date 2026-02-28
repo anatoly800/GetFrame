@@ -1,11 +1,5 @@
 // Ignore Spelling: Fmpeg Vid
 
-using Avalonia.Controls.Shapes;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text.Json.Nodes;
-
-
 namespace GetFrame.Core.Models;
 
 /// <summary>
@@ -58,7 +52,7 @@ public class VideoMetadata
     public string BuildInfoText()
     {
         var duration = TimeSpan.FromMilliseconds(DurationMs);
-        var hhmmss = $"{duration:hh\\:mm\\:ss}.{Math.Max(0, Frames - 1):000}";
+        var hhmmss = $"{duration:hh\\:mm\\:ss\\.fff}";
         return $"{Width}x{Height}, {hhmmss}, Frames [{Frames}], Framerate {Framerate} (FPS{Fps:0.##}), File Size {FormatFileSize()}";
     }
 

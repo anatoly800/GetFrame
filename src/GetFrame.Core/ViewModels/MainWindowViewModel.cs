@@ -58,7 +58,7 @@ public partial class MainWindowViewModel : ObservableObject
     private async Task OpenAsync()
     {
         string? path = await _videoService.AskVideoFilePathAsync();
-        if (_videoMetadata is null || IsBusy || string.IsNullOrEmpty(path))
+        if (IsBusy || string.IsNullOrEmpty(path))
         {
             return;
         }
@@ -107,10 +107,13 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        var outputPath = Path.Combine(_videoMetadata.FilePath, $"frame-{frameIndex}.png");
-        await RunBusyOperationAsync(async ct => await _videoService.SaveFrameAsPngAsync(_videoMetadata.FilePath, frameIndex, outputPath, ct));
-        HasError = false;
-        StatusText = $"Saved: {outputPath}";
+        var outputPath = Path.Combine(Path.GetDirectoryName(_videoMetadata.FilePath)!, $"frame-{frameIndex}.png");
+        await RunBusyOperationAsync(async ct =>
+        {
+            await _videoService.SaveFrameAsPngAsync(_videoMetadata.FilePath, frameIndex, outputPath, ct);
+            HasError = false;
+            StatusText = $"Saved: {outputPath}";
+        });
     }
 
     [RelayCommand]

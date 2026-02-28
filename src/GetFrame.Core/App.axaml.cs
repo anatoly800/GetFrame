@@ -24,6 +24,13 @@ public partial class App : Application
                 DataContext = new MainWindowViewModel(VideoService)
             };
         }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+        {
+            singleView.MainView = new MainView
+            {
+                DataContext = new MainWindowViewModel(VideoService)
+            };
+        }
 
         base.OnFrameworkInitializationCompleted();
     }
