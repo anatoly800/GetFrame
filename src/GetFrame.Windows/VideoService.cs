@@ -58,16 +58,16 @@ public partial class VideoService : IVideoService
         return result[0].Path.LocalPath;
     }
 
-    public Task<VideoMetadata> GetVideoInfoAsync(string path, CancellationToken cancellationToken)
+    public async Task<VideoMetadata> GetVideoInfoAsync(string path, CancellationToken cancellationToken)
     {
-        return GetVideoMetadataAsync(path, GetFFprobePath(), null, cancellationToken);
+        return await GetVideoMetadataAsync(path, await GetFFprobePath(), null, cancellationToken);
     }
 
     public async Task<Bitmap> GetFrameAsync(string path, int frameIndex, CancellationToken cancellationToken)
     {
-        
 
-        var ffmpegPath = GetFFmpegPath();
+
+        var ffmpegPath = await GetFFmpegPath();
         if (string.IsNullOrWhiteSpace(ffmpegPath))
         {
             throw new InvalidOperationException("FFmpeg path is not configured.");
@@ -102,7 +102,7 @@ public partial class VideoService : IVideoService
 
     public async Task SaveFrameAsPngAsync(string path, int frameIndex, string outputPngPath, CancellationToken cancellationToken)
     {
-        var ffmpegPath = GetFFmpegPath();
+        var ffmpegPath = await GetFFmpegPath();
         if (string.IsNullOrWhiteSpace(ffmpegPath))
         {
             throw new InvalidOperationException("FFmpeg path is not configured.");
@@ -168,24 +168,77 @@ public partial class VideoService : IVideoService
         }
     }
 
-    private static string GetFFmpegPath()
+    private static async Task SaveSettings(string key, string value)
     {
-        // In a real application, this would likely come from user settings or configuration
-        var ffmpegPath = Environment.GetEnvironmentVariable("GETFRAME_FFMPEG_PATH");
-        if (string.IsNullOrWhiteSpace(ffmpegPath) || !File.Exists(ffmpegPath))
+        var svc = GetFrame.Core.App.SettingsService ?? throw new InvalidOperationException("Settings service is not available.");
+        await svc.SaveAsync(key, value);
+    }
+
+    static async Task<string> LoadSettings(string key)
+    {
+        var svc = GetFrame.Core.App.SettingsService ?? throw new InvalidOperationException("Settings service is not available.");
+        var res = await svc.LoadAsync(key);
+        return res ?? string.Empty;
+    }
+
+    private static async Task<string> GetFFmpegPath()
+    {
+        // load settings from storage
+        var ffmpegPath = await LoadSettings("ffmpegPath");
+
+        if (!string.IsNullOrWhiteSpace(ffmpegPath) && File.Exists(ffmpegPath))
+        {
+            return ffmpegPath;
+        }
+
+        // ask user to select ffmpeg path
+        var topLevel = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime switch
+        {
+            IClassicDesktopStyleApplicationLifetime desktop => desktop.MainWindow,
+            ISingleViewApplicationLifetime single => single.MainView,
+            _ => null
+        });
+
+        if (topLevel == null)
+            return string.Empty;
+
+        var options = new FilePickerOpenOptions
+        {
+            Title = "Select a ffmpeg path",
+            AllowMultiple = false,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("FFmpeg")
+            {
+                Patterns = ["*.exe"]
+            },
+            new FilePickerFileType("All Files")
+            {
+                Patterns = ["*"]
+            }
+            ]
+        };
+
+        var result = await topLevel.StorageProvider.OpenFilePickerAsync(options);
+
+        if (result == null || result.Count == 0)
         {
             return string.Empty;
         }
-        return ffmpegPath;
+
+        await SaveSettings("ffmpegPath", result[0].Path.LocalPath);
+
+        return result[0].Path.LocalPath;
     }
 
-    private static string GetFFprobePath()
+    private static async Task<string> GetFFprobePath()
     {
-        // In a real application, this would likely come from user settings or configuration
-        var ffprobePath = Environment.GetEnvironmentVariable("GETFRAME_FFPROBE_PATH");
-        if (string.IsNullOrWhiteSpace(ffprobePath) || !File.Exists(ffprobePath))
+        var ffmpegPath = await GetFFmpegPath() ?? throw new InvalidOperationException("FFmpeg path is not configured.");
+        var ffmpegDirectory = Path.GetDirectoryName(ffmpegPath) ?? throw new InvalidOperationException("Failed to determine FFmpeg directory.");
+        var ffprobePath = Path.Combine(ffmpegDirectory, "ffprobe.exe");
+        if (!File.Exists(ffprobePath))
         {
-            return string.Empty;
+            throw new InvalidOperationException("FFprobe path is not configured.");
         }
         return ffprobePath;
     }
@@ -333,11 +386,31 @@ public partial class VideoService : IVideoService
                         if (long.TryParse(stream["width"]?.ToString(), out var width) &&
                             long.TryParse(stream["height"]?.ToString(), out var height))
                         {
-                            metadata.Width = (int)width;  
+                            metadata.Width = (int)width;
                             metadata.Height = (int)height;
                         }
 
                         metadata.Framerate = stream["r_frame_rate"]?.ToString() ?? "N/A";
+
+                        if (metadata.Framerate != "N/A")
+                        {
+                            if (metadata.Framerate.Contains('/'))
+                            {
+                                var parts = metadata.Framerate.Split('/');
+                                if (parts.Length == 2 &&
+                                    double.TryParse(parts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var numerator) &&
+                                    double.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var denominator) &&
+                                    denominator != 0)
+                                {
+                                    metadata.Fps = numerator > 0 && denominator > 0 ? numerator / denominator : 0;
+                                }
+                            }
+                            else if (double.TryParse(metadata.Framerate, NumberStyles.Any, CultureInfo.InvariantCulture, out var fps))
+                            {
+                                metadata.Fps = fps;
+                            }
+                        }
+
                         var duration = stream["duration"]?.ToString() ?? "N/A";
 
                         metadata.DurationMs = double.TryParse(duration, out var durationMs) ? durationMs * 1000 : 0;

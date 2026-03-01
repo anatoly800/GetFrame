@@ -4,14 +4,17 @@ using Avalonia.Markup.Xaml;
 using GetFrame.Core.Services;
 using GetFrame.Core.ViewModels;
 using GetFrame.Core.Views;
+using GetFrame.Core.Models;
 
 namespace GetFrame.Core;
 
 public partial class App : Application
 {
     public static IVideoService? VideoService { get; private set; }
+    public static ISettingsService? SettingsService { get; private set; }
 
     public static void RegisterVideoService(IVideoService service) => VideoService = service;
+    public static void RegisterSettingsService(ISettingsService service) => SettingsService = service;
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 

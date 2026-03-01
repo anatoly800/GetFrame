@@ -53,7 +53,7 @@ public class VideoMetadata
     {
         var duration = TimeSpan.FromMilliseconds(DurationMs);
         var hhmmss = $"{duration:hh\\:mm\\:ss\\.fff}";
-        return $"{Width}x{Height}, {hhmmss}, Frames [{Frames}], Framerate {Framerate} (FPS{Fps:0.##}), File Size {FormatFileSize()}";
+        return $"{Width}x{Height}, {hhmmss}, Frames [{Frames}], Framerate {Framerate} (FPS {Fps:0.##}), File Size {FormatFileSize()}";
     }
 
 }
