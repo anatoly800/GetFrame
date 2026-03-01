@@ -5,7 +5,7 @@ namespace GetFrame.Core.Services;
 public class SettingsService : ISettingsService
 {
     private readonly string _settingsFilePath;
-    private Dictionary<string, string> _settingsCache = [];
+    private readonly Dictionary<string, string> _settingsCache = [];
     private readonly Lock _semaphore = new();
 
     public SettingsService(string fileName = "GetFrameSettings.json")
@@ -16,22 +16,18 @@ public class SettingsService : ISettingsService
             Directory.CreateDirectory(appDataFolder);
         }
         _settingsFilePath = Path.Combine(appDataFolder, fileName);
-        _ = LoadSettings();
-    }
-
-    private async Task LoadSettings()
-    {
+        if (!File.Exists(_settingsFilePath))
+        {
+            return;
+        }
         try
         {
-            if (File.Exists(_settingsFilePath))
-            {
-                using var stream = File.OpenRead(_settingsFilePath);
-                _settingsCache = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream) ?? [];
-            }
+            _settingsCache = JsonSerializer.Deserialize<Dictionary<string, string>>(File.OpenRead(_settingsFilePath)) ?? [];
+            Console.WriteLine($"Loaded settings: {_settingsFilePath}");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Ignore loading errors, treat as empty cache
+            Console.WriteLine($"Failed to load settings: {ex.Message}");
         }
     }
 
