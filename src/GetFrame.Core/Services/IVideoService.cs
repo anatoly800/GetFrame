@@ -5,7 +5,7 @@ namespace GetFrame.Core.Services;
 
 public interface IVideoService
 {
-    Task<string?> AskVideoFilePathAsync();
+    Task<string?> GetVideoFilePath();
 
     Task<VideoMetadata> GetVideoInfoAsync(string path, CancellationToken cancellationToken);
 

@@ -21,7 +21,7 @@ public delegate void ProgressCallback(int value, string statusMessage, string pr
 public partial class VideoService : IVideoService
 {
 
-    public async Task<string?> AskVideoFilePathAsync()
+    public async Task<string?> GetVideoFilePath()
     {
         var topLevel = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime switch
         {

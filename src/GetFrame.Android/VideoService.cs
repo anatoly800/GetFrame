@@ -7,7 +7,7 @@ namespace GetFrame.Android;
 public sealed class VideoService : IVideoService
 {
 
-    public async Task<string?> AskVideoFilePathAsync()
+    public async Task<string?> GetVideoFilePath()
     {
         // In Android file-picker should set this path.
         var path = Environment.GetEnvironmentVariable("GETFRAME_SAMPLE_VIDEO");

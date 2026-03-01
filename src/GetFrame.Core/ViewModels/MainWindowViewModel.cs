@@ -57,7 +57,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenAsync()
     {
-        string? path = await _videoService.AskVideoFilePathAsync();
+        string? path = await _videoService.GetVideoFilePath();
         if (IsBusy || string.IsNullOrEmpty(path))
         {
             return;
