@@ -168,30 +168,14 @@ public partial class VideoService : IVideoService
         }
     }
 
-    private static async Task SaveSettings(string key, string value)
-    {
-        var svc = GetFrame.Core.App.SettingsService ?? throw new InvalidOperationException("Settings service is not available.");
-        await svc.SaveAsync(key, value);
-    }
-
-    static async Task<string> LoadSettings(string key)
-    {
-        var svc = GetFrame.Core.App.SettingsService ?? throw new InvalidOperationException("Settings service is not available.");
-        var res = await svc.LoadAsync(key);
-        return res ?? string.Empty;
-    }
-
     private static async Task<string> GetFFmpegPath()
     {
-        // load settings from storage
-        var ffmpegPath = await LoadSettings("ffmpegPath");
-
+        var ffmpegPath = GetFrame.Core.App.SettingsService.GetKey("ffmpegPath");
         if (!string.IsNullOrWhiteSpace(ffmpegPath) && File.Exists(ffmpegPath))
         {
             return ffmpegPath;
         }
 
-        // ask user to select ffmpeg path
         var topLevel = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime switch
         {
             IClassicDesktopStyleApplicationLifetime desktop => desktop.MainWindow,
@@ -226,7 +210,7 @@ public partial class VideoService : IVideoService
             return string.Empty;
         }
 
-        await SaveSettings("ffmpegPath", result[0].Path.LocalPath);
+        GetFrame.Core.App.SettingsService.SetKey("ffmpegPath", result[0].Path.LocalPath);
 
         return result[0].Path.LocalPath;
     }

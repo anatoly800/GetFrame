@@ -7,10 +7,9 @@ internal sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        GetFrame.Core.App.RegisterVideoService(new VideoService());
-        GetFrame.Core.App.RegisterSettingsService(new GetFrame.Core.Services.SettingsService("GetFrameSettings.json"));
-        BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        GetFrame.Core.App.VideoService = new VideoService();
+        GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
     public static AppBuilder BuildAvaloniaApp()

@@ -100,7 +100,7 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
-    private async Task SaveAsync()
+    private async Task SetKey()
     {
         if (_videoMetadata is null || !TryGetFrameIndex(out var frameIndex))
         {
@@ -146,7 +146,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         IsBusy = true;
         CancelCommand.NotifyCanExecuteChanged();
-        SaveCommand.NotifyCanExecuteChanged();
+        //SaveCommand.NotifyCanExecuteChanged();
         _stopwatch.Restart();
         _elapsedTimer.Start();
 
@@ -168,7 +168,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             IsBusy = false;
             CancelCommand.NotifyCanExecuteChanged();
-            SaveCommand.NotifyCanExecuteChanged();
+            //SaveCommand.NotifyCanExecuteChanged();
             _elapsedTimer.Stop();
             _stopwatch.Stop();
         }

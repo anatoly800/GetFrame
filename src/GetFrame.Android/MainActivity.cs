@@ -37,7 +37,8 @@ public class MainActivity : AvaloniaMainActivity<GetFrame.Core.App>
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        GetFrame.Core.App.RegisterVideoService(new VideoService());
+        GetFrame.Core.App.VideoService = new VideoService();
+        GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
         return base.CustomizeAppBuilder(builder);
     }
 

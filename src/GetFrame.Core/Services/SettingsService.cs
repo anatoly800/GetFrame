@@ -1,13 +1,12 @@
-using System;
-using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace GetFrame.Core.Services;
 
 public class SettingsService : ISettingsService
 {
     private readonly string _settingsFilePath;
+    private Dictionary<string, string> _settingsCache = [];
+    private readonly Lock _semaphore = new();
 
     public SettingsService(string fileName = "GetFrameSettings.json")
     {
@@ -17,62 +16,61 @@ public class SettingsService : ISettingsService
             Directory.CreateDirectory(appDataFolder);
         }
         _settingsFilePath = Path.Combine(appDataFolder, fileName);
+        _ = LoadSettings();
     }
 
-    public async Task<string?> LoadAsync(string key)
+    private async Task LoadSettings()
     {
-        if (!File.Exists(_settingsFilePath))
-        {
-            return null;
-        }
-
         try
         {
-            using var stream = File.OpenRead(_settingsFilePath);
-            var settings = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream);
-            if (settings != null && settings.TryGetValue(key, out var value))
+            if (File.Exists(_settingsFilePath))
+            {
+                using var stream = File.OpenRead(_settingsFilePath);
+                _settingsCache = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream) ?? [];
+            }
+        }
+        catch (Exception)
+        {
+            // Ignore loading errors, treat as empty cache
+        }
+    }
+
+    public string? GetKey(string key)
+    {
+        lock (_semaphore)
+        {
+            if (_settingsCache.TryGetValue(key, out var value))
             {
                 return value;
             }
             return null;
         }
-        catch (Exception)
-        {
-            // If serialization fails or file is corrupted, return default
-            return null;
-        }
     }
 
-    public async Task SaveAsync(string key, string value)
+    public void SetKey(string key, string value)
     {
-        try
+        lock (_semaphore)
         {
-            string? dir = Path.GetDirectoryName(_settingsFilePath);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            try
             {
-                Directory.CreateDirectory(dir);
+                _settingsCache[key] = value;
+                string? dir = Path.GetDirectoryName(_settingsFilePath);
+                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                var tmpFile = Path.Combine(_settingsFilePath, ".tmp");
+                using var writeStream = File.Create(tmpFile);
+                JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
+                JsonSerializerOptions options = jsonSerializerOptions;
+                JsonSerializer.Serialize(writeStream, _settingsCache, options);
+                writeStream.Flush();
+                File.Move(tmpFile, _settingsFilePath, true);
             }
-
-            Dictionary<string, string> settings;
-            if (File.Exists(_settingsFilePath))
+            catch
             {
-                using var stream = File.OpenRead(_settingsFilePath);
-                settings = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream) ?? new Dictionary<string, string>();
+                // Ignore
             }
-            else
-            {
-                settings = [];
-            }
-
-            settings[key] = value;
-
-            using var writeStream = File.Create(_settingsFilePath);
-            JsonSerializerOptions options = new() { WriteIndented = true };
-            await JsonSerializer.SerializeAsync(writeStream, settings, options);
-        }
-        catch (Exception)
-        {
-            // Ignore or log error
         }
     }
 }

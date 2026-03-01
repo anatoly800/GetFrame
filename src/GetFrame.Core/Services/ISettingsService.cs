@@ -4,6 +4,6 @@ namespace GetFrame.Core.Services;
 
 public interface ISettingsService
 {
-    Task<string?> LoadAsync(string key);
-    Task SaveAsync(string key, string value);
+    string? GetKey(string key);
+    void SetKey(string key, string value);
 }
