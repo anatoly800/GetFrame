@@ -65,7 +65,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         await RunBusyOperationAsync(async ct =>
         {
-            _videoMetadata = await _videoService.GetVideoInfoAsync(path,ct);
+            _videoMetadata = await _videoService.GetVideoInfoAsync(path, ct);
             if (_videoMetadata is null)
             {
                 HasError = true;
@@ -77,7 +77,7 @@ public partial class MainWindowViewModel : ObservableObject
                 HasError = true;
                 StatusText = $"Error: {_videoMetadata.StatusMessage}";
                 return;
-            }    
+            }
             if (_videoMetadata.Frames == 0)
             {
                 HasError = true;
@@ -100,7 +100,7 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
-    private async Task SetKey()
+    private async Task Save()
     {
         if (_videoMetadata is null || !TryGetFrameIndex(out var frameIndex))
         {
@@ -146,7 +146,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         IsBusy = true;
         CancelCommand.NotifyCanExecuteChanged();
-        //SaveCommand.NotifyCanExecuteChanged();
+        SaveCommand.NotifyCanExecuteChanged();
         _stopwatch.Restart();
         _elapsedTimer.Start();
 
@@ -168,7 +168,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             IsBusy = false;
             CancelCommand.NotifyCanExecuteChanged();
-            //SaveCommand.NotifyCanExecuteChanged();
+            SaveCommand.NotifyCanExecuteChanged();
             _elapsedTimer.Stop();
             _stopwatch.Stop();
         }
@@ -186,7 +186,7 @@ public partial class MainWindowViewModel : ObservableObject
             return false;
         }
 
-        frameIndex = (int)Math.Min(tmp, int.MaxValue);  
+        frameIndex = (int)Math.Min(tmp, int.MaxValue);
 
         if (frameIndex >= _videoMetadata.Frames)
         {
