@@ -25,12 +25,8 @@
 
     <Border Grid.Row="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding HasError}">
       <Grid>
-        <TextBlock Text="{Binding StatusText}" IsVisible="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}" VerticalAlignment="Center" />
-        <Button Content="Cancel"
-                Command="{Binding CancelCommand}"
-                IsVisible="{Binding IsBusy}"
-                HorizontalAlignment="Stretch"
-                Height="44">
+        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
+        <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}" HorizontalAlignment="Stretch" Height="44">
           <Button.Styles>
             <Style Selector="Button">
               <Setter Property="Background" Value="#2E7D32" />
@@ -47,7 +43,6 @@
             </Style>
           </Button.Styles>
         </Button>
-        <TextBlock Text="{Binding ElapsedSeconds}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" IsVisible="{Binding IsBusy}" />
       </Grid>
     </Border>
   </Grid>
