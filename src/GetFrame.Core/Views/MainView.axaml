@@ -9,11 +9,11 @@
   </UserControl.Resources>
   <Grid RowDefinitions="Auto,*,Auto" Margin="10">
     <Border Grid.Row="0" Classes="RoundedBorder">
-      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
-        <Button Grid.Column="0" Content="📂" Command="{Binding OpenCommand}" />
-        <TextBox Grid.Column="1" Text="{Binding FrameNumberText, UpdateSourceTrigger=PropertyChanged}" Watermark="Frame number" />
-        <Button Grid.Column="2" Content="⚙️" Command="{Binding SettingsCommand}" />
-        <Button Grid.Column="3" Content="💾" Command="{Binding SaveCommand}" />
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto" >
+        <Button Grid.Column="0" Content="📂" Command="{Binding OpenCommand}" Margin="4" />
+        <TextBox Grid.Column="1" Text="{Binding FrameNumberText, UpdateSourceTrigger=PropertyChanged}" Watermark="Frame number" Margin="4" />
+        <Button Grid.Column="2" Content="⚙️" Command="{Binding SettingsCommand}" Margin="4" />
+        <Button Grid.Column="3" Content="💾" Command="{Binding SaveCommand}" Margin="4" />
       </Grid>
     </Border>
 
