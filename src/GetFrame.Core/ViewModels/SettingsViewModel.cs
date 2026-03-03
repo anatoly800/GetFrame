@@ -21,6 +21,8 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private bool isFfmpegPathVisible;
     [ObservableProperty] private string settingsStatusText = string.Empty;
     [ObservableProperty] private bool hasSettingsError;
+    [ObservableProperty] private bool pngSavePathHasError;
+    [ObservableProperty] private bool ffmpegPathHasError;
 
     public SettingsViewModel(
         IVideoService videoService,
@@ -61,12 +63,19 @@ public partial class SettingsViewModel : ObservableObject
 
     partial void OnPngSavePathChanged(string value)
     {
-        _settingsService.SetKey("PngSavePath", value);
+        PngSavePathHasError = string.IsNullOrEmpty(value) || !Directory.Exists(value);
+        if (!PngSavePathHasError) {
+            _settingsService.SetKey("PngSavePath", value);
+        }
     }
 
     partial void OnFfmpegPathChanged(string value)
     {
-        _settingsService.SetKey("FfmpegPath", value);
+        FfmpegPathHasError = string.IsNullOrEmpty(value) || !File.Exists(value);
+        if (!FfmpegPathHasError)
+        {
+            _settingsService.SetKey("FfmpegPath", value);
+        }
     }
 
     [RelayCommand]

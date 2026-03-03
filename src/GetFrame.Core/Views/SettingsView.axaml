@@ -4,53 +4,53 @@
              x:Class="GetFrame.Core.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
 
-  <Grid RowDefinitions="Auto,Auto,*">
-    <!-- Navigation bar -->
-    <Border Grid.Row="0" Margin="10" Classes="RoundedBorder">
-      <StackPanel Orientation="Horizontal">
-        <Button Command="{Binding GoBackCommand}" Content="←" Margin="0,0,10,0" VerticalAlignment="Center" ToolTip.Tip="Go back to the main window"/>
-        <StackPanel Orientation="Horizontal" Spacing="5">
-            <TextBlock Text="Settings" VerticalAlignment="Center" FontWeight="Bold"/>
-            <TextBlock Text="{Binding SettingsStatusText}" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding HasSettingsError}"/>
-        </StackPanel>
-      </StackPanel>
-    </Border>
-
-    <!-- Settings content -->
-    <ScrollViewer Grid.Row="2" Margin="10">
-      <StackPanel Orientation="Vertical">
-
-        <!-- Theme toggle -->
-        <Border Margin="2" Classes="RoundedBorder">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-              <TextBlock Text="Dark Theme" VerticalAlignment="Center" Margin="0,0,10,0"/>
-              <CheckBox IsChecked="{Binding IsDarkTheme}" ToolTip.Tip="Toggle between light and dark theme"/>
+    <Grid RowDefinitions="Auto,Auto,*" Margin="10">
+        <!-- Navigation bar -->
+        <Border Margin="2" Grid.Row="0" Classes="RoundedBorder">
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding GoBackCommand}" Content="←" Margin="0,0,10,0" VerticalAlignment="Center" ToolTip.Tip="Go back to the main window"/>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="Settings" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SettingsStatusText}" VerticalAlignment="Center" Foreground="Red" IsVisible="{Binding HasSettingsError}"/>
+                </StackPanel>
             </StackPanel>
         </Border>
 
-        <!-- PNG Save Path -->
-        <Border Margin="2" Classes="RoundedBorder">
-            <StackPanel>
-              <TextBlock Text="PNG Save Path:" Margin="0,0,0,5"/>
-              <Grid ColumnDefinitions="*,Auto">
-                <TextBox Text="{Binding PngSavePath}" IsReadOnly="True" ToolTip.Tip="Current folder for saved PNG images"/>
-                <Button Grid.Column="1" Command="{Binding SelectPngPathCommand}" Content="..." Margin="5,0,0,0" Padding="10,2" ToolTip.Tip="Choose a folder to save PNG images"/>
-              </Grid>
-            </StackPanel>
-        </Border>
+        <!-- Settings content -->
+        <ScrollViewer Grid.Row="2">
+            <StackPanel Orientation="Vertical">
 
-        <!-- FFmpeg Path (Windows only) -->
-        <Border Margin="2" Classes="RoundedBorder">
-            <StackPanel IsVisible="{Binding IsFfmpegPathVisible}">
-              <TextBlock Text="FFmpeg Path:" Margin="0,0,0,5"/>
-              <Grid ColumnDefinitions="*,Auto">
-                <TextBox Text="{Binding FfmpegPath}" IsReadOnly="True" ToolTip.Tip="Current path to the FFmpeg executable"/>
-                <Button Grid.Column="1" Command="{Binding SelectFfmpegPathCommand}" Content="..." Margin="5,0,0,0" Padding="10,2" ToolTip.Tip="Select the FFmpeg executable file"/>
-              </Grid>
-            </StackPanel>
-        </Border>
+                <!-- Theme toggle -->
+                <Border Margin="2" Classes="RoundedBorder">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Dark Theme" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <CheckBox IsChecked="{Binding IsDarkTheme}" ToolTip.Tip="Toggle between light and dark theme"/>
+                    </StackPanel>
+                </Border>
 
-      </StackPanel>
-    </ScrollViewer>
-  </Grid>
+                <!-- PNG Save Path -->
+                <Border Margin="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding PngSavePathHasError}">
+                    <StackPanel>
+                        <TextBlock Text="PNG Save Path:" Margin="0,0,0,5"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Text="{Binding PngSavePath}" ToolTip.Tip="Current folder for saved PNG images"/>
+                            <Button Grid.Column="1" Command="{Binding SelectPngPathCommand}" Content="..." Margin="5,0,0,0" Padding="10,2" ToolTip.Tip="Choose a folder to save PNG images"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- FFmpeg Path (Windows only) -->
+                <Border Margin="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding FfmpegPathHasError}">
+                    <StackPanel IsVisible="{Binding IsFfmpegPathVisible}">
+                        <TextBlock Text="FFmpeg Path:" Margin="0,0,0,5"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Text="{Binding FfmpegPath}" ToolTip.Tip="Current path to the FFmpeg executable"/>
+                            <Button Grid.Column="1" Command="{Binding SelectFfmpegPathCommand}" Content="..." Margin="5,0,0,0" Padding="10,2" ToolTip.Tip="Select the FFmpeg executable file"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
