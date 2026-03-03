@@ -183,7 +183,7 @@ public partial class VideoService : IVideoService
 
     private static async Task<string> GetFFmpegPath()
     {
-        var ffmpegPath = GetFrame.Core.App.SettingsService.GetKey("ffmpegPath");
+        var ffmpegPath = GetFrame.Core.App.SettingsService.GetKey("FfmpegPath");
         if (!string.IsNullOrWhiteSpace(ffmpegPath) && File.Exists(ffmpegPath))
         {
             return ffmpegPath;
@@ -223,7 +223,7 @@ public partial class VideoService : IVideoService
             return string.Empty;
         }
 
-        GetFrame.Core.App.SettingsService.SetKey("ffmpegPath", result[0].Path.LocalPath);
+        GetFrame.Core.App.SettingsService.SetKey("FfmpegPath", result[0].Path.LocalPath);
 
         return result[0].Path.LocalPath;
     }
