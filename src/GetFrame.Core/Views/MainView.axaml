@@ -35,8 +35,7 @@
 
     <Border Grid.Row="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding HasError}">
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5">
-            <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"
-                    ToolTip.Tip="Stop the current operation">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}" ToolTip.Tip="Stop the current operation">
             <Button.Styles>
                 <Style Selector="Button">
                 <Setter Property="Background" Value="#2E7D32" />
