@@ -271,4 +271,14 @@ public partial class MainWindowViewModel : ObservableObject
             return null;
         }
     }
+
+    /// <summary>
+    /// Displays an error message in the status bar.
+    /// </summary>
+    /// <param name="message">The error message to display.</param>
+    public void ShowError(string message)
+    {
+        HasError = true;
+        StatusText = message;
+    }
 }

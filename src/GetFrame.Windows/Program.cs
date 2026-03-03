@@ -1,4 +1,5 @@
 using Avalonia;
+using GetFrame.Core.ViewModels;
 
 namespace GetFrame.Windows;
 
@@ -10,6 +11,16 @@ internal sealed class Program
         GetFrame.Core.App.VideoService = new VideoService();
         GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
         GetFrame.Core.App.SettingsService.SetKey("SelectFFmpeg", "true");
+        
+        // Subscribe to settings error events
+        GetFrame.Core.App.SettingsService.OnError += (message) =>
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                MainWindowViewModel.Current?.ShowError(message);
+            });
+        };
+        
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 

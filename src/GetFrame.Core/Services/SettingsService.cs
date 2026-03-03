@@ -8,6 +8,8 @@ public class SettingsService : ISettingsService
     private readonly Dictionary<string, string> _settingsCache = [];
     private readonly Lock _semaphore = new();
 
+    public event Action<string>? OnError;
+
     public SettingsService(string fileName = "GetFrameSettings.json")
     {
         var appDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GetFrame");
@@ -43,7 +45,7 @@ public class SettingsService : ISettingsService
         }
     }
 
-    // key is case isensitive
+    // key is case insensitive
     public void SetKey(string key, string value)
     {
         lock (_semaphore)
@@ -52,10 +54,10 @@ public class SettingsService : ISettingsService
             {
                 _settingsCache[key.ToLowerInvariant()] = value;
                 string? dir = Path.GetDirectoryName(_settingsFilePath);
-                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
+                if (string.IsNullOrEmpty(dir) ) {
+                    throw new Exception("Invalid settings file path");
                 }
+                Directory.CreateDirectory(dir);
                 var tmpFile = Path.Combine(_settingsFilePath, ".tmp");
                 using var writeStream = File.Create(tmpFile);
                 JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
@@ -64,9 +66,9 @@ public class SettingsService : ISettingsService
                 writeStream.Flush();
                 File.Move(tmpFile, _settingsFilePath, true);
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore
+                OnError?.Invoke($"Failed to save settings: {ex.Message}");
             }
         }
     }

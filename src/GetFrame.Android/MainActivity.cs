@@ -4,6 +4,7 @@ using Avalonia.Android;
 using Android.OS;
 using AndroidX.Core.Content;
 using AndroidX.Core.App;
+using GetFrame.Core.ViewModels;
 
 namespace GetFrame.Android;
 
@@ -39,6 +40,16 @@ public class MainActivity : AvaloniaMainActivity<GetFrame.Core.App>
         GetFrame.Core.App.VideoService = new VideoService();
         GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
         GetFrame.Core.App.SettingsService.SetKey("SelectFFmpeg", "false");
+        
+        // Subscribe to settings error events
+        GetFrame.Core.App.SettingsService.OnError += (message) =>
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                MainWindowViewModel.Current?.ShowError(message);
+            });
+        };
+        
         return base.CustomizeAppBuilder(builder);
     }
 
