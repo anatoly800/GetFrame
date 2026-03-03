@@ -12,6 +12,7 @@
       <Setter Property="CornerRadius" Value="8" />
       <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
       <Setter Property="Padding" Value="8" />
+      <Setter Property="BorderThickness" Value="0" />
     </Style>
     <Style Selector="Border.ErrorBorder">
       <Setter Property="BorderBrush" Value="Red" />
