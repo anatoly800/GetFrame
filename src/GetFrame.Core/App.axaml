@@ -7,8 +7,8 @@
 
     <Style Selector="Border.RoundedBorder">
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="Padding" Value="10" />
-      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="5" />
+      <Setter Property="CornerRadius" Value="6" />
       <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlMidBrush}" />
     </Style>
     <Style Selector="Border.ErrorBorder">

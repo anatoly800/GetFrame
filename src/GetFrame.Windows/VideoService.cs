@@ -65,8 +65,6 @@ public partial class VideoService : IVideoService
 
     public async Task<Bitmap> GetFrameAsync(string path, int frameIndex, CancellationToken cancellationToken)
     {
-
-
         var ffmpegPath = await GetFFmpegPath();
         if (string.IsNullOrWhiteSpace(ffmpegPath))
         {

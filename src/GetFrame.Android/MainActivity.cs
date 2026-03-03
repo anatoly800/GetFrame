@@ -30,7 +30,6 @@ public class MainActivity : AvaloniaMainActivity<GetFrame.Core.App>
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-
         var permission = GetStoragePermission();
         RequestStoragePermissions(permission);
     }
@@ -39,6 +38,7 @@ public class MainActivity : AvaloniaMainActivity<GetFrame.Core.App>
     {
         GetFrame.Core.App.VideoService = new VideoService();
         GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
+        GetFrame.Core.App.SettingsService.SetKey("SelectFFmpeg", "false");
         return base.CustomizeAppBuilder(builder);
     }
 

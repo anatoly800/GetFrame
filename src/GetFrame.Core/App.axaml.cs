@@ -21,14 +21,14 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(VideoService)
+                DataContext = new MainWindowViewModel()
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
             singleView.MainView = new MainView
             {
-                DataContext = new MainWindowViewModel(VideoService)
+                DataContext = new MainWindowViewModel()
             };
         }
 

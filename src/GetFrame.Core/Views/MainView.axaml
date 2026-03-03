@@ -8,12 +8,19 @@
     <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
   </UserControl.Resources>
   <Grid RowDefinitions="Auto,*,Auto" Margin="10">
+      
     <Border Grid.Row="0" Classes="RoundedBorder">
       <Grid ColumnDefinitions="Auto,*,Auto,Auto" >
-        <Button Grid.Column="0" Content="📂" Command="{Binding OpenCommand}" Margin="4" />
+        <Button Grid.Column="0" Command="{Binding OpenCommand}" Margin="4">
+          <Image Source="{Binding OpenIconSource}" Width="20" Height="20"/>
+        </Button>
         <TextBox Grid.Column="1" Text="{Binding FrameNumberText, UpdateSourceTrigger=PropertyChanged}" Watermark="Frame number" Margin="4" />
-        <Button Grid.Column="2" Content="⚙️" Command="{Binding SettingsCommand}" Margin="4" />
-        <Button Grid.Column="3" Content="💾" Command="{Binding SaveCommand}" Margin="4" />
+        <Button Grid.Column="2" Command="{Binding SettingsCommand}" Margin="4">
+          <Image Source="{Binding SettingsIconSource}" Width="20" Height="20"/>
+        </Button>
+        <Button Grid.Column="3" Command="{Binding SaveCommand}" Margin="4">
+          <Image Source="{Binding SaveIconSource}" Width="20" Height="20"/>
+        </Button>
       </Grid>
     </Border>
 
@@ -24,26 +31,28 @@
     </Border>
 
     <Border Grid.Row="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding HasError}">
-      <Grid>
-        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
-        <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}" HorizontalAlignment="Stretch" Height="44">
-          <Button.Styles>
-            <Style Selector="Button">
-              <Setter Property="Background" Value="#2E7D32" />
-              <Style.Animations>
-                <Animation Duration="0:0:1.2" IterationCount="INFINITE" PlaybackDirection="Alternate">
-                  <KeyFrame Cue="0%">
-                    <Setter Property="Background" Value="#2E7D32" />
-                  </KeyFrame>
-                  <KeyFrame Cue="100%">
-                    <Setter Property="Background" Value="#66BB6A" />
-                  </KeyFrame>
-                </Animation>
-              </Style.Animations>
-            </Style>
-          </Button.Styles>
-        </Button>
-      </Grid>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}">
+            <Button.Styles>
+                <Style Selector="Button">
+                <Setter Property="Background" Value="#2E7D32" />
+                <Style.Animations>
+                    <Animation Duration="0:0:1.2" IterationCount="INFINITE" PlaybackDirection="Alternate">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Background" Value="#2E7D32" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Background" Value="#66BB6A" />
+                    </KeyFrame>
+                    </Animation>
+                </Style.Animations>
+                </Style>
+            </Button.Styles>
+            </Button>
+            <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
+            <Button Content="Open folder" Command="{Binding OpenFolderCommand}" VerticalAlignment="Center"/>
+        </StackPanel>
     </Border>
+      
   </Grid>
 </UserControl>

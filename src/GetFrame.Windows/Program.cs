@@ -9,6 +9,7 @@ internal sealed class Program
     {
         GetFrame.Core.App.VideoService = new VideoService();
         GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
+        GetFrame.Core.App.SettingsService.SetKey("SelectFFmpeg", "true");
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
