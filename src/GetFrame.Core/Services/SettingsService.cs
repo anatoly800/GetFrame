@@ -52,6 +52,11 @@ public class SettingsService : ISettingsService
         {
             try
             {
+                if (_settingsCache.TryGetValue(key.ToLowerInvariant(), out var currentValue) && currentValue == value)
+                {
+                    return;
+                }
+
                 _settingsCache[key.ToLowerInvariant()] = value;
                 string? dir = Path.GetDirectoryName(_settingsFilePath);
                 if (string.IsNullOrEmpty(dir) ) {
