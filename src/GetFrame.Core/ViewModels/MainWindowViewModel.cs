@@ -232,28 +232,16 @@ public partial class MainWindowViewModel : ObservableObject
         settingsView.Show();
     }
 
-    /// <summary>
-    /// Reads the DarkTheme setting, applies the Avalonia theme variant,
-    /// and updates the SVG icon sources for the toolbar buttons.
-    /// </summary>
     public void ApplyTheme()
     {
         var raw = GetFrame.Core.App.SettingsService.GetKey("DarkTheme");
         IsDarkTheme = raw == null || !bool.TryParse(raw, out var v) || v;
-
         if (Application.Current is not null)
         {
             Application.Current.RequestedThemeVariant = IsDarkTheme ? ThemeVariant.Dark : ThemeVariant.Light;
         }
-
-        UpdateIcons();
-    }
-
-    private void UpdateIcons()
-    {
         var suffix = IsDarkTheme ? "dark" : "light";
         var folder = IsDarkTheme ? "dark_theme_white" : "light_theme_black";
-
         OpenIconSource = LoadSvgIcon(folder, $"open-{suffix}.svg");
         SettingsIconSource = LoadSvgIcon(folder, $"settings-{suffix}.svg");
         SaveIconSource = LoadSvgIcon(folder, $"save-{suffix}.svg");

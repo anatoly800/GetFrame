@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using GetFrame.Core.Services;
 using GetFrame.Core.ViewModels;
 using GetFrame.Core.Views;
-using GetFrame.Core.Models;
 
 namespace GetFrame.Core;
 

@@ -27,10 +27,8 @@
         <StackPanel>
           <TextBlock Text="PNG Save Path:" Margin="0,0,0,5"/>
           <Grid ColumnDefinitions="*,Auto">
-            <TextBox Grid.Column="0" Name="PngSavePathTextBox" IsReadOnly="True"
-                     ToolTip.Tip="Current folder for saved PNG images"/>
-            <Button Grid.Column="1" Name="SelectPngPathButton" Content="..." Margin="5,0,0,0" Padding="10,2"
-                    ToolTip.Tip="Choose a folder to save PNG images"/>
+            <TextBox Grid.Column="0" Name="PngSavePathTextBox" IsReadOnly="True" ToolTip.Tip="Current folder for saved PNG images"/>
+            <Button Grid.Column="1" Name="SelectPngPathButton" Content="..." Margin="5,0,0,0" Padding="10,2" ToolTip.Tip="Choose a folder to save PNG images"/>
           </Grid>
         </StackPanel>
 
@@ -38,10 +36,8 @@
         <StackPanel Name="FfmpegPathPanel">
           <TextBlock Text="FFmpeg Path:" Margin="0,0,0,5"/>
           <Grid ColumnDefinitions="*,Auto">
-            <TextBox Grid.Column="0" Name="FfmpegPathTextBox" IsReadOnly="True"
-                     ToolTip.Tip="Current path to the FFmpeg executable"/>
-            <Button Grid.Column="1" Name="SelectFfmpegPathButton" Content="..." Margin="5,0,0,0" Padding="10,2"
-                    ToolTip.Tip="Select the FFmpeg executable file"/>
+            <TextBox Grid.Column="0" Name="FfmpegPathTextBox" IsReadOnly="True" ToolTip.Tip="Current path to the FFmpeg executable"/>
+            <Button Grid.Column="1" Name="SelectFfmpegPathButton" Content="..." Margin="5,0,0,0" Padding="10,2" ToolTip.Tip="Select the FFmpeg executable file"/>
           </Grid>
         </StackPanel>
       </StackPanel>
