@@ -61,12 +61,15 @@ public class SettingsService : ISettingsService
                 {
                     Directory.CreateDirectory(dir);
                 }
-                var tmpFile = Path.Combine(_settingsFilePath, ".tmp");
-                using var writeStream = File.Create(tmpFile);
-                JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
-                JsonSerializerOptions options = jsonSerializerOptions;
-                JsonSerializer.Serialize(writeStream, _settingsCache, options);
-                writeStream.Flush();
+                var tmpFile = $"{_settingsFilePath}.tmp";
+                {
+                    using var writeStream = File.Create(tmpFile);
+                    JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
+                    JsonSerializerOptions options = jsonSerializerOptions;
+                    JsonSerializer.Serialize(writeStream, _settingsCache, options);
+                    writeStream.Flush();
+                    writeStream.Close();
+                }
                 File.Move(tmpFile, _settingsFilePath, true);
             }
             catch (Exception ex)
