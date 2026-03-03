@@ -19,6 +19,8 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private string pngSavePath = string.Empty;
     [ObservableProperty] private string ffmpegPath = string.Empty;
     [ObservableProperty] private bool isFfmpegPathVisible;
+    [ObservableProperty] private string settingsStatusText = string.Empty;
+    [ObservableProperty] private bool hasSettingsError;
 
     public SettingsViewModel(
         IVideoService videoService,
@@ -28,6 +30,13 @@ public partial class SettingsViewModel : ObservableObject
         _videoService = videoService;
         _settingsService = settingsService;
         _mainViewModel = mainViewModel;
+
+        // Subscribe to settings status events
+        _settingsService.OnStatusChanged += (message) =>
+        {
+            SettingsStatusText = message;
+            HasSettingsError = !string.IsNullOrEmpty(message);
+        };
 
         LoadSettings();
     }

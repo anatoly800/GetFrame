@@ -12,8 +12,8 @@ internal sealed class Program
         GetFrame.Core.App.SettingsService = new GetFrame.Core.Services.SettingsService("GetFrameSettings.json");
         GetFrame.Core.App.SettingsService.SetKey("SelectFFmpeg", "true");
         
-        // Subscribe to settings error events
-        GetFrame.Core.App.SettingsService.OnError += (message) =>
+        // Subscribe to settings status events
+        GetFrame.Core.App.SettingsService.OnStatusChanged += (message) =>
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
