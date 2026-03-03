@@ -63,7 +63,7 @@ public class SettingsService : ISettingsService
                     throw new Exception("Invalid settings file path");
                 }
                 Directory.CreateDirectory(dir);
-                var tmpFile = Path.Combine(_settingsFilePath, ".tmp");
+                var tmpFile = $"{_settingsFilePath}.tmp";
                 using var writeStream = File.Create(tmpFile);
                 JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
                 JsonSerializerOptions options = jsonSerializerOptions;
