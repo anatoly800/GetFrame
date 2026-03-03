@@ -35,7 +35,7 @@ public class SettingsService : ISettingsService
     {
         lock (_semaphore)
         {
-            if (_settingsCache.TryGetValue(key, out var value))
+            if (_settingsCache.TryGetValue(key.ToLowerInvariant(), out var value))
             {
                 return value;
             }
@@ -43,13 +43,14 @@ public class SettingsService : ISettingsService
         }
     }
 
+    // key is case isensitive
     public void SetKey(string key, string value)
     {
         lock (_semaphore)
         {
             try
             {
-                _settingsCache[key] = value;
+                _settingsCache[key.ToLowerInvariant()] = value;
                 string? dir = Path.GetDirectoryName(_settingsFilePath);
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 {
