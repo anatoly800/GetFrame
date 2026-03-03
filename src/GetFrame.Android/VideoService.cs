@@ -2,10 +2,19 @@ using Android.Media;
 using GetFrame.Core.Models;
 using GetFrame.Core.Services;
 
+
 namespace GetFrame.Android;
 
 public sealed class VideoService : IVideoService
 {
+    public async Task OpenPngFolder(string? filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            return;
+        }
+        // Android doesn't have a concept of "open folder", so we'll just open PNG file itself in the default app.
+    }
 
     public async Task<string?> GetVideoFilePath()
     {

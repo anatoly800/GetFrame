@@ -10,7 +10,7 @@
   <Grid RowDefinitions="Auto,*,Auto" Margin="10">
       
     <Border Grid.Row="0" Classes="RoundedBorder">
-      <Grid ColumnDefinitions="Auto,*,Auto,Auto" >
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" >
         <Button Grid.Column="0" Command="{Binding OpenCommand}" Margin="4">
           <Image Source="{Binding OpenIconSource}" Width="20" Height="20"/>
         </Button>
@@ -20,6 +20,9 @@
         </Button>
         <Button Grid.Column="3" Command="{Binding SaveCommand}" Margin="4">
           <Image Source="{Binding SaveIconSource}" Width="20" Height="20"/>
+        </Button>
+        <Button Grid.Column="4" Command="{Binding OpenPngFolderCommand}" Margin="4">
+          <Image Source="{Binding OpenPngFolderIconSource}" Width="20" Height="20"/>
         </Button>
       </Grid>
     </Border>
@@ -50,7 +53,6 @@
             </Button.Styles>
             </Button>
             <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
-            <Button Content="Open folder" Command="{Binding OpenFolderCommand}" VerticalAlignment="Center"/>
         </StackPanel>
     </Border>
       

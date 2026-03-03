@@ -12,7 +12,6 @@
         <AssemblyName>GetFrame.Android</AssemblyName>
         <AssemblyTitle>GetFrame.Android</AssemblyTitle>
         <RootNamespace>GetFrame.Android</RootNamespace>
-        <DefineConstants>$(DefineConstants);ANDROID</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Label="Avalonia">
         <AvaloniaXamlIlDebuggerLaunch>True</AvaloniaXamlIlDebuggerLaunch>

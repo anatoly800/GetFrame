@@ -2,6 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GetFrame.Core.Views"
         x:Class="GetFrame.Core.Views.MainWindow"
-        Title="GetFrame">
+        Title="GetFrame"
+        Icon="avares://GetFrame.Core/resources/logo.png"
+        >
   <local:MainView />
 </Window>

@@ -2,8 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="GetFrame.Core.Views.SettingsView"
         Title="Settings"
-        Width="400"
-        Height="300">
+        Icon="avares://GetFrame.Core/resources/logo.png">
   
   <Grid RowDefinitions="Auto,*">
     <!-- Navigation bar -->

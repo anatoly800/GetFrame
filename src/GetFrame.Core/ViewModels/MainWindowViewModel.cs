@@ -32,6 +32,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private SvgImage? openIconSource;
     [ObservableProperty] private SvgImage? settingsIconSource;
     [ObservableProperty] private SvgImage? saveIconSource;
+    [ObservableProperty] private SvgImage? openPngFolderIconSource;
 
     private string? _savedFilePath = null;
 
@@ -138,34 +139,14 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void OpenFolder()
+    private void OpenPngFolder()
     {
         try
         {
-#if ANDROID
-            // For Android, we'll just open the folder using the system file manager
-            // This is platform-specific and may require additional implementation
-            // For now, we'll just show a message
-            // In a real implementation, you would use platform-specific APIs
-#elif WINDOWS
-            Process.Start("explorer", $"/select,\"{_savedFilePath}\"");
-#elif MACOS
-            Process.Start("open", new[] { "-R", _savedFilePath });
-#elif LINUX
-            // On Linux, try to open the folder with the default file manager
-            // This might vary depending on the desktop environment
-            var psi = new ProcessStartInfo
-            {
-                FileName = "xdg-open",
-                Arguments = _savedFilePath,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
-#endif
+            GetFrame.Core.App.VideoService.OpenPngFolder(_savedFilePath);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Failed to open folder: {ex.Message}");
             HasError = true;
             StatusText = $"Failed to open folder: {ex.Message}";
         }
@@ -276,6 +257,7 @@ public partial class MainWindowViewModel : ObservableObject
         OpenIconSource = LoadSvgIcon(folder, $"open-{suffix}.svg");
         SettingsIconSource = LoadSvgIcon(folder, $"settings-{suffix}.svg");
         SaveIconSource = LoadSvgIcon(folder, $"save-{suffix}.svg");
+        OpenPngFolderIconSource = LoadSvgIcon(folder, $"eye-{suffix}.svg");
     }
 
     private static SvgImage? LoadSvgIcon(string folder, string fileName)

@@ -20,6 +20,21 @@ public delegate void ProgressCallback(int value, string statusMessage, string pr
 
 public partial class VideoService : IVideoService
 {
+    public async Task OpenPngFolder(string? filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException($"File not found: {filePath}");
+        }
+        var argument = $"/select, \"{filePath}\"";
+        var processStartInfo = new ProcessStartInfo
+        {
+            FileName = "explorer.exe",
+            Arguments = argument,
+            UseShellExecute = true
+        };
+        await Task.Run(() => Process.Start(processStartInfo));
+    }
 
     public async Task<string?> GetVideoFilePath()
     {
