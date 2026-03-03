@@ -136,9 +136,10 @@ public partial class MainWindowViewModel : ObservableObject
             HasError = false;
             StatusText = $"Saved: {_savedFilePath}";
         });
+        OpenPngFolderCommand.NotifyCanExecuteChanged();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanOpenPngFolder))]
     private void OpenPngFolder()
     {
         try
@@ -151,6 +152,8 @@ public partial class MainWindowViewModel : ObservableObject
             StatusText = $"Failed to open folder: {ex.Message}";
         }
     }
+
+    private bool CanOpenPngFolder() => _savedFilePath is not null;
 
     [RelayCommand]
     private void Cancel()
