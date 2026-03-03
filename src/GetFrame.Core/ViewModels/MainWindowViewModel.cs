@@ -278,6 +278,12 @@ public partial class MainWindowViewModel : ObservableObject
     /// <param name="message">The error message to display.</param>
     public void ShowError(string message)
     {
+        if (string.IsNullOrEmpty(message))
+        {
+            HasError = false;
+            StatusText = "Idle";
+            return;
+        }
         HasError = true;
         StatusText = message;
     }
