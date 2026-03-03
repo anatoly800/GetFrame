@@ -1,9 +1,36 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GetFrame.Core.Views"
+        xmlns:vm="clr-namespace:GetFrame.Core.ViewModels"
         x:Class="GetFrame.Core.Views.MainWindow"
         Title="GetFrame"
         Icon="avares://GetFrame.Core/resources/logo.png"
-        >
-  <local:MainView />
+        Width="800" Height="600">
+
+  <Window.Styles>
+    <Style Selector="Border.RoundedBorder">
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+      <Setter Property="Padding" Value="8" />
+    </Style>
+    <Style Selector="Border.ErrorBorder">
+      <Setter Property="BorderBrush" Value="Red" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+  </Window.Styles>
+
+  <Window.DataContext>
+    <vm:MainWindowViewModel />
+  </Window.DataContext>
+
+  <Window.DataTemplates>
+    <DataTemplate DataType="{x:Type vm:MainWindowViewModel}">
+      <local:MainView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+      <local:SettingsView />
+    </DataTemplate>
+  </Window.DataTemplates>
+
+  <ContentControl Content="{Binding CurrentView}" />
 </Window>

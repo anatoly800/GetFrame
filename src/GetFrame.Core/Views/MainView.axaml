@@ -8,7 +8,7 @@
     <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
   </UserControl.Resources>
   <Grid RowDefinitions="Auto,*,Auto" Margin="10">
-      
+
     <Border Grid.Row="0" Classes="RoundedBorder">
       <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" >
         <Button Grid.Column="0" Command="{Binding OpenCommand}" Margin="4" ToolTip.Tip="Open a video file">
@@ -55,6 +55,6 @@
             <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
         </StackPanel>
     </Border>
-      
+
   </Grid>
 </UserControl>

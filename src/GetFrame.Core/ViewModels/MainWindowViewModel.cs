@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GetFrame.Core.Models;
+using GetFrame.Core.Services;
 using GetFrame.Core.Views;
 using Avalonia.Svg.Skia;
 
@@ -34,6 +35,8 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private SvgImage? saveIconSource;
     [ObservableProperty] private SvgImage? openPngFolderIconSource;
 
+    [ObservableProperty] private ObservableObject _currentView;
+
     private string? _savedFilePath = null;
 
     // Singleton reference so SettingsView can trigger theme refresh
@@ -42,6 +45,7 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel()
     {
         Current = this;
+        _currentView = this;
 
         _debounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(800) };
         _debounceTimer.Tick += (_, _) =>
@@ -229,10 +233,13 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private static void Settings()
+    private void Settings()
     {
-        var settingsView = new SettingsView();
-        settingsView.Show();
+        var settingsViewModel = new SettingsViewModel(
+            GetFrame.Core.App.VideoService,
+            GetFrame.Core.App.SettingsService,
+            this);
+        CurrentView = settingsViewModel;
     }
 
     public void ApplyTheme()

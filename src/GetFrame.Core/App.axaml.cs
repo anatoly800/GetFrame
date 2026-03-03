@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using GetFrame.Core.Services;
-using GetFrame.Core.ViewModels;
 using GetFrame.Core.Views;
 
 namespace GetFrame.Core;
@@ -18,16 +17,13 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel()
-            };
+            desktop.MainWindow = new MainWindow();
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
             singleView.MainView = new MainView
             {
-                DataContext = new MainWindowViewModel()
+                DataContext = new ViewModels.MainWindowViewModel()
             };
         }
 
