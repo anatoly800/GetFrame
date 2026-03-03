@@ -8,7 +8,8 @@
     <!-- Navigation bar -->
     <Border Grid.Row="0" Padding="10">
       <StackPanel Orientation="Horizontal">
-        <Button Name="BackButton" Content="←" Margin="0,0,10,0" VerticalAlignment="Center"/>
+        <Button Name="BackButton" Content="←" Margin="0,0,10,0" VerticalAlignment="Center"
+                ToolTip.Tip="Go back to the main window"/>
         <TextBlock Text="Settings" FontSize="16" VerticalAlignment="Center" FontWeight="Bold"/>
       </StackPanel>
     </Border>
@@ -19,15 +20,17 @@
         <!-- Theme toggle -->
         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
           <TextBlock Text="Dark Theme" VerticalAlignment="Center"/>
-          <CheckBox Name="ThemeToggle"/>
+          <CheckBox Name="ThemeToggle" ToolTip.Tip="Toggle between light and dark theme"/>
         </StackPanel>
 
         <!-- PNG Save Path -->
         <StackPanel>
           <TextBlock Text="PNG Save Path:" Margin="0,0,0,5"/>
           <Grid ColumnDefinitions="*,Auto">
-            <TextBox Grid.Column="0" Name="PngSavePathTextBox" IsReadOnly="True"/>
-            <Button Grid.Column="1" Name="SelectPngPathButton" Content="..." Margin="5,0,0,0" Padding="10,2"/>
+            <TextBox Grid.Column="0" Name="PngSavePathTextBox" IsReadOnly="True"
+                     ToolTip.Tip="Current folder for saved PNG images"/>
+            <Button Grid.Column="1" Name="SelectPngPathButton" Content="..." Margin="5,0,0,0" Padding="10,2"
+                    ToolTip.Tip="Choose a folder to save PNG images"/>
           </Grid>
         </StackPanel>
 
@@ -35,8 +38,10 @@
         <StackPanel Name="FfmpegPathPanel">
           <TextBlock Text="FFmpeg Path:" Margin="0,0,0,5"/>
           <Grid ColumnDefinitions="*,Auto">
-            <TextBox Grid.Column="0" Name="FfmpegPathTextBox" IsReadOnly="True"/>
-            <Button Grid.Column="1" Name="SelectFfmpegPathButton" Content="..." Margin="5,0,0,0" Padding="10,2"/>
+            <TextBox Grid.Column="0" Name="FfmpegPathTextBox" IsReadOnly="True"
+                     ToolTip.Tip="Current path to the FFmpeg executable"/>
+            <Button Grid.Column="1" Name="SelectFfmpegPathButton" Content="..." Margin="5,0,0,0" Padding="10,2"
+                    ToolTip.Tip="Select the FFmpeg executable file"/>
           </Grid>
         </StackPanel>
       </StackPanel>

@@ -11,17 +11,22 @@
       
     <Border Grid.Row="0" Classes="RoundedBorder">
       <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" >
-        <Button Grid.Column="0" Command="{Binding OpenCommand}" Margin="4">
+        <Button Grid.Column="0" Command="{Binding OpenCommand}" Margin="4"
+                ToolTip.Tip="Open a video file">
           <Image Source="{Binding OpenIconSource}" Width="20" Height="20"/>
         </Button>
-        <TextBox Grid.Column="1" Text="{Binding FrameNumberText, UpdateSourceTrigger=PropertyChanged}" Watermark="Frame number" Margin="4" />
-        <Button Grid.Column="2" Command="{Binding SettingsCommand}" Margin="4">
+        <TextBox Grid.Column="1" Text="{Binding FrameNumberText, UpdateSourceTrigger=PropertyChanged}" Watermark="Frame number" Margin="4"
+                 ToolTip.Tip="Enter the frame number to preview and export" />
+        <Button Grid.Column="2" Command="{Binding SettingsCommand}" Margin="4"
+                ToolTip.Tip="Open application settings">
           <Image Source="{Binding SettingsIconSource}" Width="20" Height="20"/>
         </Button>
-        <Button Grid.Column="3" Command="{Binding SaveCommand}" Margin="4">
+        <Button Grid.Column="3" Command="{Binding SaveCommand}" Margin="4"
+                ToolTip.Tip="Save the current frame as a PNG image">
           <Image Source="{Binding SaveIconSource}" Width="20" Height="20"/>
         </Button>
-        <Button Grid.Column="4" Command="{Binding OpenPngFolderCommand}" Margin="4">
+        <Button Grid.Column="4" Command="{Binding OpenPngFolderCommand}" Margin="4"
+                ToolTip.Tip="Open the folder where PNG files are saved">
           <Image Source="{Binding OpenPngFolderIconSource}" Width="20" Height="20"/>
         </Button>
       </Grid>
@@ -35,7 +40,8 @@
 
     <Border Grid.Row="2" Classes="RoundedBorder" Classes.ErrorBorder="{Binding HasError}">
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5">
-            <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}"
+                    ToolTip.Tip="Stop the current operation">
             <Button.Styles>
                 <Style Selector="Button">
                 <Setter Property="Background" Value="#2E7D32" />
